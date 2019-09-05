@@ -3,6 +3,13 @@
 $override = "/var/www/html/override";
 $thefile = "/var/www/html/enabled";
 
+if (isset($_GET['heating'])) {
+    $json = json_encode($_POST);
+    file_put_contents("heating.json", $json);
+    print $json;
+    exit;
+}
+
 if (isset($_GET['status'])) {
     if ($_GET['status'] == "0") {
         unlink($override);
@@ -19,7 +26,6 @@ if (isset($_GET['status'])) {
 if (isset($_GET['schedule'])) {
 
     $json = file_get_contents("schedule.json");
-
     $classes = json_decode($json, true);
 
     $now = new DateTime(date("Y-m-d"));
@@ -64,7 +70,6 @@ if (isset($_GET['schedule'])) {
     }
 
     $out .= "<tr><td><br><span style='font-size:9pt'>" . date("F j, Y, G:i") . "</span></td></tr>";
-
     $out .= "</table>";
 
     print $out;
@@ -84,8 +89,8 @@ if (isset($_GET['armdoor'])) {
 
     foreach ($classes as $class) {
         $date = new DateTime($class['date']);
-        $start_time = date("H:i", strtotime($class['start_time']) - 1800 );
-        $end_time = date("H:i", strtotime($class['end_time']) - 1800 );
+        $start_time = date("H:i", strtotime($class['start_time']) - 1800);
+        $end_time = date("H:i", strtotime($class['end_time']) - 1800);
 
         if ($date == $now) {
             if ($now_time >= $end_time) {
@@ -114,6 +119,23 @@ if (isset($_GET['armdoor'])) {
         @unlink($thefile);
     }
     exit;
+}
+
+$schedule_toggle = true;
+$schedule_minutes_prior = 45;
+$schedule_run_period = 30;
+$schedule_on_temp = 18;
+$schedule_cutoff_temp = 25;
+
+if (file_exists("heating.json")) {
+    $heating_settings = json_decode(file_get_contents("heating.json"), true);
+    $schedule_toggle = $heating_settings['schedule_toggle'];
+    $schedule_minutes_prior = $heating_settings['schedule_minutes_prior'];
+    $schedule_run_period = $heating_settings['schedule_run_period'];
+    $schedule_on_temp = $heating_settings['schedule_on_temp'];
+    $schedule_cutoff_temp = $heating_settings['schedule_cutoff_temp'];
+} else {
+    file_put_contents("heating.json", '{"schedule_toggle":"true","schedule_minutes_prior":"45","schedule_run_period":"30","schedule_on_temp":"18","schedule_cutoff_temp":"25"}');
 }
 
 ?>
@@ -197,12 +219,104 @@ if (isset($_GET['armdoor'])) {
                     <div class="slide" id="controls">
                         <div class="table">
                             <div class="cell">
+                                <button class='door-manager'><img width='48' src='door-small.png'></button> <button><img width='48' class='heat-manager' src='heating-small.png'></button>
                                 <br>
-                                <button class='buttonred' id='buttonred'>Disarm Door</button>
                                 <br>
-                                <br>
-                                <button class='buttongreen' id='buttongreen'>Arm Door</button>
-                                <br>
+                                <div id='door-manager'>
+                                    <button class='buttonred' id='buttonred'>Disarm Door</button>
+                                    <br>
+                                    <br>
+                                    <button class='buttongreen' id='buttongreen'>Arm Door</button>
+                                    <br>
+                                </div>
+                                <div id='heat-manager' style='display: none'>
+                                    <table style='margin:auto'>
+                                        <tr>
+                                            <td>
+                                                <h4>Boost</h4>
+                                                <button id="schedule_boost" class="boost">15 Mins</button>
+                                            </td>
+                                            <td>
+                                                <h4>Schedule</h4>
+                                                <label class="switch">
+                                                    <input type="checkbox" <?php print $schedule_toggle == "true" ? 'checked=checked' : '';?> id="schedule_toggle" class="schedule_changed">
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br>
+                                    <table style='margin:auto'>
+                                        <tr>
+                                            <td>
+                                                <h4>Minutes Prior</h4>
+                                                <div class="number-spinner">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="dwn"><span class="icon-minus"></span></a>
+                                                    </span>
+                                                    <input type="text" class="pl-ns-value schedule_changed" value="<?php print $schedule_minutes_prior;?>" maxlength="2" id="schedule_minutes_prior">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="up"><span class="icon-plus"></span></a>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <h4>Run Period</h4>
+                                                <div class="number-spinner">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="dwn"><span class="icon-minus"></span></a>
+                                                    </span>
+                                                    <input type="text" class="pl-ns-value schedule_changed" value="<?php print $schedule_run_period;?>" maxlength="2" id="schedule_run_period">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="up"><span class="icon-plus"></span></a>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <br>
+                                    <table style='margin:auto'>
+                                        <tr>
+                                            <td>
+                                                <h4>On Temp</h4>
+                                                <div class="number-spinner">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="dwn"><span class="icon-minus"></span></a>
+                                                    </span>
+                                                    <input type="text" class="pl-ns-value schedule_changed" value="<?php print $schedule_on_temp;?>" maxlength="2" id="schedule_on_temp">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="up"><span class="icon-plus"></span></a>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <h4>Cutoff Temp</h4>
+                                                <div class="number-spinner">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="dwn"><span class="icon-minus"></span></a>
+                                                    </span>
+                                                    <input type="text" class="pl-ns-value schedule_changed" value="<?php print $schedule_cutoff_temp;?>" maxlength="2" id="schedule_cutoff_temp">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="up"><span class="icon-plus"></span></a>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <br>
+                                    <table style='margin:auto'>
+                                        <tr>
+                                            <td>
+                                                Temperature: <span id='metric_temp'>0C</span>
+                                            </td>
+                                            <td>
+                                                Humidity: <span id='metric_humid'>0%</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -221,36 +335,56 @@ if (isset($_GET['armdoor'])) {
     </div>
 
     <script src='jq.js'></script>
-    <script src="pincode.js"></script>
     <script type="text/javascript">
 
     var ws;
+    var ws2;
 
     function init() {
 
-      ws = new WebSocket("ws://<?php print $_SERVER['SERVER_ADDR'];?>:9001/");
+        ws = new WebSocket("ws://<?php print $_SERVER['SERVER_ADDR'];?>:9001/");
 
-      ws.onopen = function() {
-        output("onopen");
-      };
+        ws.onopen = function() {
+            output("onopen");
+        };
 
-      ws.onmessage = function(e) {
-        output(e.data);
-      };
+        ws.onmessage = function(e) {
+            output(e.data);
+        };
 
-      ws.onclose = function() {
-        output("onclose");
-      };
+        ws.onclose = function() {
+            output("onclose");
+        };
 
-      ws.onerror = function(e) {
-        output("onerror");
-        console.log(e)
-      };
+        ws.onerror = function(e) {
+            output("onerror");
+            console.log(e);
+        };
+    }
 
+    function init2() {
+        ws2 = new WebSocket("ws://<?php print $_SERVER['SERVER_ADDR'];?>:9002/");
+
+        ws2.onopen = function() {
+            console.log("onopen");
+        };
+
+        ws2.onmessage = function(e) {
+            output2(e.data);
+        };
+
+        ws2.onclose = function() {
+            console.log("close");
+        };
+
+        ws2.onerror = function(e) {
+            console.log(e)
+        };
     }
 
     $(document).ready(function() {
-	    init();
+        init2();
+        init();
     });
 
 
@@ -265,6 +399,20 @@ if (isset($_GET['armdoor'])) {
        }
     }
 
+    function output2(str) {
+       console.log( "x:" + str)
+       if(str.localeCompare("") == 0) {
+            return;
+       }
+
+       if(str.indexOf(',') > 0 ){
+           var parts = str.split(',');
+            $("#metric_temp").text(parts[0] + "C");
+            $("#metric_humid").text(parts[1] + "%");
+       }
+    }
+
     </script>
+    <script src="pincode.js"></script>
 </body>
 </html>

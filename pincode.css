@@ -1,10 +1,14 @@
 @import 'https://fonts.googleapis.com/css?family=Titillium+Web:400,700';
+:focus {
+  outline: none;
+}
 
-:focus {outline:none;}
-::-moz-focus-inner {border:0;}
+::-moz-focus-inner {
+  border: 0;
+}
 
 html, body {
-  overflow:hidden;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   height: 100%;
   width: 100%;
@@ -14,13 +18,13 @@ html, body {
   font-size: 12pt;
 }
 
-h1, h2 , h3, h4, h5 {
+h1, h2, h3, h4, h5 {
   margin: 0px;
 }
 
 h1 {
-  margin-top:10px;
-  margin-bottom:5px;
+  margin-top: 10px;
+  margin-bottom: 5px;
   color: red;
   font-size: 16pt;
 }
@@ -36,7 +40,7 @@ h3 {
 }
 
 h5 {
-  margin-top:25px;
+  margin-top: 25px;
 }
 
 h5.good {
@@ -50,7 +54,7 @@ h5.bad {
 }
 
 button::-moz-focus-inner {
-   border: 0;
+  border: 0;
 }
 
 span {
@@ -66,22 +70,30 @@ span {
   margin: auto auto;
 }
 
+.buttonred, .buttongreen {
+  width: 250px;
+  height: 80px;
+  font-size: 26px;
+  outline: none;
+}
+
 .buttonred {
-   color: #000000;
-   background-color: red;
-   width: 150px;
-   height: 120px;
-   font-size: 26px;
-   outline: none;
+  color: #000000;
+  background-color: red;
 }
 
 .buttongreen {
-   color: #ffffff;
-   background-color: green;
-   width: 150px;
-   height: 120px;
-   font-size: 28px;
-   outline: none;
+  color: #ffffff;
+  background-color: green;
+}
+
+.boost {
+  color: #000000;
+  background-color: #FF3333;
+  width:150px;
+  height:34px;
+  font-size: 12pt;
+  font-weight: bold;
 }
 
 .table {
@@ -210,7 +222,6 @@ span {
   -webkit-transition: all .5s ease-in-out;
 }
 
-
 /*------
 # Toast Grid
 ----*/
@@ -227,15 +238,11 @@ span {
   margin-right: 10px;
 }
 
-.grid__col--1-of-3,
-.grid__col--2-of-6,
-.grid__col--4-of-12 {
+.grid__col--1-of-3, .grid__col--2-of-6, .grid__col--4-of-12 {
   width: 30%;
 }
 
-.grid__col--1-of-4,
-.grid__col--2-of-8,
-.grid__col--3-of-12 {
+.grid__col--1-of-4, .grid__col--2-of-8, .grid__col--3-of-12 {
   width: 22%;
 }
 
@@ -375,3 +382,130 @@ span {
   }
 }
 
+.number-spinner {
+  max-width: 120px;
+  line-height: 30px;
+  padding: 0;
+  margin: auto;
+  border-radius: 4px;
+  border: 2px solid #e2e2e2;
+  overflow: hidden;
+  position: relative;
+  display: table;
+}
+
+.number-spinner input {
+  height: 30px;
+  max-height: 30px;
+  line-height: 30px;
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  border: none;
+  position: relative;
+  float: left;
+  width: 100%;
+  text-align: center;
+}
+
+.number-spinner input:focus {
+  outline: none;
+}
+
+.number-spinner .ns-btn {
+  position: relative;
+  font-size: 0;
+  white-space: nowrap;
+  vertical-align: middle;
+  display: table-cell;
+  cursor: pointer;
+}
+
+.number-spinner .ns-btn a {
+  height: 30px;
+  min-height: 30px;
+  width: 30px;
+  padding: 0;
+  max-width: 30px;
+  line-height: 30px;
+  border-radius: 0;
+  border: none;
+  text-align: center;
+  position: relative;
+  background: #e2e2e2;
+  color: #333;
+  display: inline-block;
+  vertical-align: middle;
+  text-decoration: none;
+}
+
+.number-spinner .ns-btn .icon-minus:after {
+  content: "\002212";
+  font-size: 25px;
+  line-height: 28px;
+  font-weight: bold;
+}
+
+.number-spinner .ns-btn .icon-plus:after {
+  content: "\00002B";
+  font-size: 28px;
+  line-height: 25px;
+  font-weight: bold;
+}
+
+/* The switch - the box around the slider */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked+.slider {
+  background-color: #FF3333;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #FF3333;
+}
+
+input:checked+.slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}

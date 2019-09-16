@@ -13,11 +13,11 @@ from datetime import datetime, timedelta
 import Adafruit_DHT
 
 server = WebsocketServer(9002, host='0.0.0.0')
-sensor = Adafruit_DHT.DHT11
-pin = 26
+sensor = Adafruit_DHT.DHT22
+pin = 23
 
-heater1 = "192.168.0.129"
-heater2 = "192.168.0.129"
+heater1 = "10.42.0.10"
+heater2 = "10.42.0.20"
 ip1 = heater2
 ip2 = heater1
 port = 9999
@@ -93,11 +93,17 @@ def check_schedule(schedule_json, heating_json, cstate):
 
     if boost_time != None:
         if now < boost_time:
-            return
+            return True
         else:
             boost_time = None
 
     humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
+
+    with open('/var/www/html/temperature', 'w') as filep1:
+        filep1.write(str(temperature))
+
+    with open('/var/www/html/humidity', 'w') as filep2:
+        filep2.write(str(humidity))
 
     server.send_message_to_all(str(temperature) + "," + str(humidity))
 
@@ -153,10 +159,10 @@ def main_loop(bool1, bool2):
         schedule_json = None
 
         try:
-            myfile1 = open('heating.json', "r+")
+            myfile1 = open('/var/www/html/heating.json', "r+")
             heating_json = json.load(myfile1)
 
-            myfile2 = open('schedule.json', "r+")
+            myfile2 = open('/var/www/html/schedule.json', "r+")
             schedule_json = json.load(myfile2)
         except IOError:
             time.sleep(sleep_time)
@@ -176,6 +182,12 @@ def main_loop(bool1, bool2):
             change_heating_state(ip1,new_heating_state)
             change_heating_state(ip2, new_heating_state)
             server.send_message_to_all(str(new_heating_state))
+
+            if new_heating_state == True:
+                with open('/var/www/html/heating_status', 'w') as filep:
+                    filep.write('on')
+            else:
+                os.unlink('/var/www/html/heating_status')
         else:
             print("state same:" + str(new_heating_state))
 

@@ -4,6 +4,7 @@ rm -rf ~/.cache/mozilla/firefox/*.default/*
 rm -rf ~/.cache/midori/
 
 nohup /usr/bin/python3 /var/www/html/monitor-clap.py > /tmp/clap &
+nohup /usr/bin/python /var/www/html/heating-manager.py > /tmp/heat &
 midori -e Fullscreen -a http://localhost
 sleep 15
 #xdotool search --sync --onlyvisible --class "Firefox" windowactivate key F11

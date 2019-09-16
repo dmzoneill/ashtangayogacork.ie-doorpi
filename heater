@@ -1,0 +1,76 @@
+#!/usr/bin/python
+
+import socket
+import json
+import time
+import os
+import sys
+
+from struct import pack
+
+heater1 = "10.42.0.10"
+heater2 = "10.42.0.20"
+port = 9999
+
+commands = {'info': '{"system":{"get_sysinfo":{}}}',
+            'on': '{"system":{"set_relay_state":{"state":1}}}',
+            'off': '{"system":{"set_relay_state":{"state":0}}}',
+            'cloudinfo': '{"cnCloud":{"get_info":{}}}',
+            'wlanscan': '{"netif":{"get_scaninfo":{"refresh":0}}}',
+                        'time': '{"time":{"get_time":{}}}',
+                        'schedule': '{"schedule":{"get_rules":{}}}',
+                        'countdown': '{"count_down":{"get_rules":{}}}',
+                        'antitheft': '{"anti_theft":{"get_rules":{}}}',
+                        'reboot': '{"system":{"reboot":{"delay":1}}}',
+                        'reset': '{"system":{"reset":{"delay":1}}}',
+                        'energy': '{"emeter":{"get_realtime":{}}}'
+            }
+
+def encrypt(string):
+    key = 171
+    result = pack('>I', len(string))
+    for i in string:
+        a = key ^ ord(i)
+        key = a
+        result += chr(a)
+    return result
+
+
+def decrypt(string):
+    key = 171
+    result = ""
+    for i in string:
+        a = key ^ ord(i)
+        key = ord(i)
+        result += chr(a)
+    return result
+
+
+cmds = ['info', 'on', 'off']
+
+if len(sys.argv) != 2:
+    print("specify, info, on or off")
+    sys.exit(1)
+
+if sys.argv[1] not in cmds:
+    print("specify, info, on or off")
+    sys.exit(1)
+ 
+try:
+    sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock_tcp.connect((heater1, port))
+    sock_tcp.send(encrypt(commands[sys.argv[1]]))
+    data = sock_tcp.recv(2048)
+    sock_tcp.close()
+    print("Sent:     " + sys.argv[1])
+    print("Received: " + decrypt(data[4:]))
+
+    sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock_tcp.connect((heater2, port))
+    sock_tcp.send(encrypt(commands[sys.argv[1]]))
+    data = sock_tcp.recv(2048)
+    sock_tcp.close()
+    print("Sent:     " + sys.argv[1])
+    print("Received: " + decrypt(data[4:]))
+except socket.error:
+    pass

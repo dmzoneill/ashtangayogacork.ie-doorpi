@@ -1,0 +1,20 @@
+#!/usr/bin/python3
+import time
+import RPi.GPIO as GPIO
+
+light_output = 21;
+light_state = False
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(light_output, GPIO.OUT)
+
+for x in range(3):
+
+    light_state = not light_state
+    GPIO.output(light_output, light_state)    
+    time.sleep(1)
+
+    light_state = not light_state
+    GPIO.output(light_output, light_state)
+    time.sleep(1)

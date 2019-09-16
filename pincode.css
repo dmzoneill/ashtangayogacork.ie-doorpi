@@ -77,6 +77,12 @@ span {
   outline: none;
 }
 
+.buttonopendoor {
+  width: 160px;
+  height: 30px;
+  font-size: 14px;
+}
+
 .buttonred {
   color: #000000;
   background-color: red;
@@ -90,8 +96,8 @@ span {
 .boost {
   color: #000000;
   background-color: #FF3333;
-  width:150px;
-  height:34px;
+  width: 150px;
+  height: 34px;
   font-size: 12pt;
   font-weight: bold;
 }

@@ -1,0 +1,26 @@
+{
+    "FAUXMO": {
+        "ip_address": "auto"
+    },
+    "PLUGINS": {
+        "SimpleHTTPPlugin": {
+            "DEVICES": [
+                {
+                    "port": 12340,
+                    "on_cmd": "http://192.168.0.30:4444/",
+                    "off_cmd": "http://192.168.0.30:4444/",
+                    "method": "GET",
+                    "name": "door"
+                },
+		{
+                    "port": 12341,
+                    "on_cmd": "http://192.168.0.30:4444/",
+                    "off_cmd": "http://192.168.0.30:4444/",
+                    "method": "GET",
+                    "name": "heater"
+		}
+	    ] 
+        }
+    }
+}
+

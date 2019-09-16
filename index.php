@@ -32,7 +32,7 @@ if (isset($_GET['schedule'])) {
     $now_time = date("H:i");
 
     $out = "<table width='100%'>";
-
+    
     $i = 0;
 
     foreach ($classes as $class) {
@@ -69,7 +69,8 @@ if (isset($_GET['schedule'])) {
         $out .= "<tr><td><h5 class='bad' id='doorarm'>Door is disarmed</h5></td></tr>";
     }
 
-    $out .= "<tr><td><br><span style='font-size:9pt'>" . date("F j, Y, G:i") . "</span></td></tr>";
+    $out .= "<tr><td><span style='font-size:9pt'>" . date("F j, Y, G:i") . "</span></td></tr>";
+    $out .= "<tr><td><br><button class='buttonopendoor' id='buttonopendoor' onclick='opendoor()'>One Time Open Door</button></td></tr>";
     $out .= "</table>";
 
     print $out;
@@ -118,6 +119,16 @@ if (isset($_GET['armdoor'])) {
     } else {
         @unlink($thefile);
     }
+    exit;
+}
+
+if (isset($_GET['settings'])) {
+    print file_get_contents("heating.json");
+    exit;
+}
+
+if (isset($_GET['opendoor'])) {
+    @shell_exec("/usr/bin/opendoor");
     exit;
 }
 
@@ -310,8 +321,7 @@ if (file_exists("heating.json")) {
                                         <tr>
                                             <td>
                                                 Temperature: <span id='metric_temp'>0C</span>
-                                            </td>
-                                            <td>
+                                                <br>
                                                 Humidity: <span id='metric_humid'>0%</span>
                                             </td>
                                         </tr>
@@ -339,7 +349,6 @@ if (file_exists("heating.json")) {
 
     var ws;
     var ws2;
-
     function init() {
 
         ws = new WebSocket("ws://<?php print $_SERVER['SERVER_ADDR'];?>:9001/");
@@ -396,6 +405,8 @@ if (file_exists("heating.json")) {
            $("#logofade").animate({opacity: 0}, 1000);
        } else if(str.localeCompare("False") == 0) {
            $("#logofade").animate({opacity: 1}, 1000);
+       } else if(str.localeCompare("refresh") == 0) {
+           location.refresh();
        }
     }
 
@@ -407,8 +418,8 @@ if (file_exists("heating.json")) {
 
        if(str.indexOf(',') > 0 ){
            var parts = str.split(',');
-            $("#metric_temp").text(parts[0] + "C");
-            $("#metric_humid").text(parts[1] + "%");
+            $("#metric_temp").text((parts[0]).substring(0,4) + "C");
+            $("#metric_humid").text((parts[1]).substring(0,4) + "%");
        }
     }
 

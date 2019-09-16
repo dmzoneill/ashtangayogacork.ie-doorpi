@@ -17,27 +17,59 @@ GPIO.setup(sound_input, GPIO.IN)
 GPIO.setup(light_output, GPIO.OUT)
 
 def client_left(cl, server):
-    global client
-    msg = "Client (%s) left" % cl['id']
-    print(msg)
+    try:
+        global client
+        msg = "Client (%s) left" % cl['id']
+        print(msg)
+    except:
+        print("failed disconnect")
 
 def new_client(cl, server):
-    global client
-    msg = "New client (%s) connected" % cl['id']
-    print(msg)
+    try:
+        global client
+        msg = "New client (%s) connected" % cl['id']
+        print(msg)
+    except:
+        print("failed connect")
 
 def msg_received(cl, server, msg):
-    global client
+    global client, num, last_time, light_state, sleep_time
+    if 'refresh' in msg:
+        print(msg)
+        server.send_message_to_all(msg)
+        return
+
     msg = "Client (%s) : %s" % (cl['id'], msg)
     print(msg)
+    
+    if time.time() >= last_time:
+        for x in range(3):
+            print( str(num) + ": " + str(light_state))
+            num = num + 1
+            last_time = time.time() + sleep_time;
+
+            light_state = not light_state
+            GPIO.output(light_output, light_state)
+            
+            server.send_message_to_all(str(light_state))
+            time.sleep(sleep_time)
+            
+            server.send_message_to_all(str(False))
+            
+            light_state = not light_state
+            GPIO.output(light_output, light_state)
+            print( str(num) + ": " + str(light_state))
+            time.sleep(sleep_time)
+
 
 def buttonEventHandler_rising (pin):
+
+    global num, last_time, light_state, server, sleep_time
 
     if os.path.isfile('/var/www/html/enabled') == False:
         GPIO.output(light_output, False)
         return;
 
-    global num, last_time, light_state, server, sleep_time
     if time.time() >= last_time:
         for x in range(3):
             print( str(num) + ": " + str(light_state))

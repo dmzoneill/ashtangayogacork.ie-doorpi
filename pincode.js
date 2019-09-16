@@ -130,6 +130,12 @@ function function_switcher() {
   });
 }
 
+function opendoor() {
+  $.get("index.php?opendoor=true", function (data) {
+    
+  });
+}
+
 function pin_controls() {
   // http://www.jsfuck.com/
   //var pin = (+!![] + []) + (!+[] + !![] + []) + (!+[] + !![] + !![] + []) + (!+[] + !![] + !![] + !![] + []);
@@ -170,7 +176,6 @@ function pin_controls() {
         }, 500);
 
       }
-
     }
   });
 
@@ -205,6 +210,28 @@ $(document).ready(function () {
       $.get("index.php?schedule=true", function (data) {
         $("#scheduletable").html(data);
       });
+    });
+    $.get("index.php?settings=true", function (data) {
+      var settings = JSON.parse(data);
+      if ($("#schedule_toggle").is(":checked") != settings.schedule_toggle) {
+        $("#schedule_toggle").prop("checked", settings.schedule_toggle);
+      }
+
+      if ($("#schedule_minutes_prior").val() != settings.schedule_minutes_prior) {
+        $("#schedule_minutes_prior").val(settings.schedule_minutes_prior);
+      }
+
+      if ($("#schedule_run_period").val() != settings.schedule_run_period) {
+        $("#schedule_run_period").val(settings.schedule_run_period);
+      }
+
+      if ($("#schedule_on_temp").val() != settings.schedule_on_temp) {
+        $("#schedule_on_temp").val(settings.schedule_on_temp);
+      }
+
+      if ($("#schedule_cutoff_temp").val() != settings.schedule_cutoff_temp) {
+        $("#schedule_cutoff_temp").val(settings.schedule_cutoff_temp);
+      }
     });
   }, 15000);
 

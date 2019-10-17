@@ -28,25 +28,47 @@ function update_heating() {
   });
 }
 
+function update_door() {
+  console.log($("#door_schedule_toggle").is(":checked"));
+  console.log($("#door_schedule_minutes_prior").val());
+  console.log($("#door_schedule_minutes_class_term").val());
+
+  $.post("index.php?door=true", {
+    door_schedule_toggle: $("#door_schedule_toggle").is(":checked"),
+    door_schedule_minutes_prior: $("#door_schedule_minutes_prior").val(),
+    door_schedule_minutes_class_term: $("#door_schedule_minutes_class_term").val()
+  }, function (data) {
+    var obj = JSON.parse(data);
+    console.log(obj);
+  });
+}
+
 function door_controls() {
-  $("#buttonred").click(function () {
-    $("#controls").hide();
-    $("#pincode").hide();
-    $("#schedule").show();
+
+  $("#door_schedule_toggle").change(function () {
+    setTimeout(update_door, 200);
+
+    var checked = $("#door_schedule_toggle").is(":checked");
+
+    if (checked) {
+      $.get("index.php?status=0", function (data) {
+        update_door();
+      });
+      return;
+    }
 
     $.get("index.php?status=1", function (data) {
-      update_schedule();
+      update_door();
     });
+
   });
 
-  $("#buttongreen").click(function () {
-    $("#controls").hide();
-    $("#pincode").hide();
-    $("#schedule").show();
+  $(".door-icon-plus").click(function () {
+    setTimeout(update_door, 200);
+  });
 
-    $.get("index.php?status=0", function (data) {
-      update_schedule();
-    });
+  $(".door-icon-minus").click(function () {
+    setTimeout(update_door, 200);
   });
 }
 
@@ -66,7 +88,7 @@ function counterdown() {
 }
 
 function heating_controls() {
-  $(".schedule_changed").change(function () {
+  $("#schedule_toggle").change(function () {
     setTimeout(update_heating, 200);
   });
 
@@ -91,31 +113,6 @@ function heating_controls() {
     }
     ws2.send("boost");
   });
-
-  $('.number-spinner>.ns-btn>a').click(function () {
-    var btn = $(this),
-      oldValue = btn.closest('.number-spinner').find('input').val().trim(),
-      newVal = 0;
-
-    if (btn.attr('data-dir') === 'up') {
-      newVal = parseInt(oldValue) + 1;
-    } else {
-      if (oldValue > 1) {
-        newVal = parseInt(oldValue) - 1;
-      } else {
-        newVal = 1;
-      }
-    }
-    btn.closest('.number-spinner').find('input').val(newVal);
-  });
-  $('.number-spinner>input').keypress(function (evt) {
-    evt = (evt) ? evt : window.event;
-    var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      return false;
-    }
-    return true;
-  });
 }
 
 function function_switcher() {
@@ -131,9 +128,7 @@ function function_switcher() {
 }
 
 function opendoor() {
-  $.get("index.php?opendoor=true", function (data) {
-    
-  });
+  $.get("index.php?opendoor=true");
 }
 
 function pin_controls() {
@@ -196,6 +191,33 @@ function pin_controls() {
 }
 
 $(document).ready(function () {
+
+  $('.number-spinner>.ns-btn>a').click(function () {
+    var btn = $(this),
+      oldValue = btn.closest('.number-spinner').find('input').val().trim(),
+      newVal = 0;
+
+    if (btn.attr('data-dir') === 'up') {
+      newVal = parseInt(oldValue) + 1;
+    } else {
+      if (oldValue > 1) {
+        newVal = parseInt(oldValue) - 1;
+      } else {
+        newVal = 1;
+      }
+    }
+    btn.closest('.number-spinner').find('input').val(newVal);
+  });
+
+  $('.number-spinner>input').keypress(function (evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
+  });
+
   pin_controls();
   door_controls();
   heating_controls();
@@ -231,6 +253,21 @@ $(document).ready(function () {
 
       if ($("#schedule_cutoff_temp").val() != settings.schedule_cutoff_temp) {
         $("#schedule_cutoff_temp").val(settings.schedule_cutoff_temp);
+      }
+    });
+
+    $.get("index.php?door_settings=true", function (data) {
+      var settings = JSON.parse(data);
+      if ($("#door_schedule_toggle").is(":checked") != settings.door_schedule_toggle) {
+        $("#door_schedule_toggle").prop("checked", settings.door_schedule_toggle);
+      }
+
+      if ($("#door_schedule_minutes_prior").val() != settings.door_schedule_minutes_prior) {
+        $("#door_schedule_minutes_prior").val(settings.door_schedule_minutes_prior);
+      }
+
+      if ($("#door_schedule_minutes_class_term").val() != settings.door_schedule_minutes_class_term) {
+        $("#door_schedule_minutes_class_term").val(settings.door_schedule_minutes_class_term);
       }
     });
   }, 15000);

@@ -1,11 +1,18 @@
 <?php
 
-$override = "/var/www/html/override";
-$thefile = "/var/www/html/enabled";
+$override = "/var/www/html/scratch/override";
+$thefile = "/var/www/html/scratch/enabled";
 
 if (isset($_GET['heating'])) {
     $json = json_encode($_POST);
-    file_put_contents("heating.json", $json);
+    file_put_contents("scratch/heating.json", $json);
+    print $json;
+    exit;
+}
+
+if (isset($_GET['door'])) {
+    $json = json_encode($_POST);
+    file_put_contents("scratch/door.json", $json);
     print $json;
     exit;
 }
@@ -25,7 +32,7 @@ if (isset($_GET['status'])) {
 
 if (isset($_GET['schedule'])) {
 
-    $json = file_get_contents("schedule.json");
+    $json = file_get_contents("scratch/schedule.json");
     $classes = json_decode($json, true);
 
     $now = new DateTime(date("Y-m-d"));
@@ -78,9 +85,54 @@ if (isset($_GET['schedule'])) {
     exit;
 }
 
+if (isset($_GET['settings'])) {
+    print file_get_contents("scratch/heating.json");
+    exit;
+}
+
+if (isset($_GET['door_settings'])) {
+    print file_get_contents("scratch/door.json");
+    exit;
+}
+
+if (isset($_GET['opendoor'])) {
+    @shell_exec("/usr/bin/opendoor");
+    exit;
+}
+
+$schedule_toggle = true;
+$schedule_minutes_prior = 45;
+$schedule_run_period = 30;
+$schedule_on_temp = 18;
+$schedule_cutoff_temp = 25;
+
+$door_schedule_toggle = true;
+$door_schedule_minutes_prior = 30;
+$door_schedule_minutes_class_term = 45;
+
+if (file_exists("scratch/heating.json")) {
+    $heating_settings = json_decode(file_get_contents("scratch/heating.json"), true);
+    $schedule_toggle = $heating_settings['schedule_toggle'];
+    $schedule_minutes_prior = $heating_settings['schedule_minutes_prior'];
+    $schedule_run_period = $heating_settings['schedule_run_period'];
+    $schedule_on_temp = $heating_settings['schedule_on_temp'];
+    $schedule_cutoff_temp = $heating_settings['schedule_cutoff_temp'];
+} else {
+    file_put_contents("scratch/heating.json", '{"schedule_toggle":"true","schedule_minutes_prior":"45","schedule_run_period":"30","schedule_on_temp":"18","schedule_cutoff_temp":"25"}');
+}
+
+if (file_exists("scratch/door.json")) {
+    $door_settings = json_decode(file_get_contents("scratch/door.json"), true);
+    $door_schedule_toggle = $door_settings['door_schedule_toggle'];
+    $door_schedule_minutes_prior = $door_settings['door_schedule_minutes_prior'];
+    $door_schedule_minutes_class_term = $door_settings['door_schedule_minutes_class_term'];
+} else {
+    file_put_contents("scratch/door.json", '{"door_schedule_toggle":"true","door_schedule_minutes_prior":"30","door_schedule_minutes_class_term":"45"}');
+}
+
 if (isset($_GET['armdoor'])) {
 
-    $json = file_get_contents("schedule.json");
+    $json = file_get_contents("scratch/schedule.json");
     $classes = json_decode($json, true);
 
     $now = new DateTime(date("Y-m-d"));
@@ -90,8 +142,8 @@ if (isset($_GET['armdoor'])) {
 
     foreach ($classes as $class) {
         $date = new DateTime($class['date']);
-        $start_time = date("H:i", strtotime($class['start_time']) - 1800);
-        $end_time = date("H:i", strtotime($class['end_time']) - 1800);
+        $start_time = date("H:i", strtotime($class['start_time']) - ($door_schedule_minutes_prior * 60));
+        $end_time = date("H:i", strtotime($class['end_time']) - ($door_schedule_minutes_class_term * 60));
 
         if ($date == $now) {
             if ($now_time >= $end_time) {
@@ -122,46 +174,19 @@ if (isset($_GET['armdoor'])) {
     exit;
 }
 
-if (isset($_GET['settings'])) {
-    print file_get_contents("heating.json");
-    exit;
-}
-
-if (isset($_GET['opendoor'])) {
-    @shell_exec("/usr/bin/opendoor");
-    exit;
-}
-
-$schedule_toggle = true;
-$schedule_minutes_prior = 45;
-$schedule_run_period = 30;
-$schedule_on_temp = 18;
-$schedule_cutoff_temp = 25;
-
-if (file_exists("heating.json")) {
-    $heating_settings = json_decode(file_get_contents("heating.json"), true);
-    $schedule_toggle = $heating_settings['schedule_toggle'];
-    $schedule_minutes_prior = $heating_settings['schedule_minutes_prior'];
-    $schedule_run_period = $heating_settings['schedule_run_period'];
-    $schedule_on_temp = $heating_settings['schedule_on_temp'];
-    $schedule_cutoff_temp = $heating_settings['schedule_cutoff_temp'];
-} else {
-    file_put_contents("heating.json", '{"schedule_toggle":"true","schedule_minutes_prior":"45","schedule_run_period":"30","schedule_on_temp":"18","schedule_cutoff_temp":"25"}');
-}
-
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Ashtanga Yoga Cork</title>
-    <link rel="stylesheet" href="pincode.css">
+    <link rel="stylesheet" href="css/pincode.css">
 </head>
 <body>
     <div class="center">
         <table class='tablewrapper'>
             <tr>
-                <td><img src='logo-500.png' id='logofade' style='width:260px; margin-right:20px; margin-left:20px' /></td>
+                <td><img src='images/logo-500.png' id='logofade' style='width:260px; margin-right:20px; margin-left:20px' /></td>
                 <td style='width:200px; text-align: right'>
 
                     <div id="pincode">
@@ -230,15 +255,51 @@ if (file_exists("heating.json")) {
                     <div class="slide" id="controls">
                         <div class="table">
                             <div class="cell">
-                                <button class='door-manager'><img width='48' src='door-small.png'></button> <button><img width='48' class='heat-manager' src='heating-small.png'></button>
+                                <button class='door-manager'><img width='48' src='images/door-small.png'></button> <button><img width='48' class='heat-manager' src='images/heating-small.png'></button>
                                 <br>
                                 <br>
                                 <div id='door-manager'>
-                                    <button class='buttonred' id='buttonred'>Disarm Door</button>
                                     <br>
+                                    <table style='margin:auto'>
+                                        <tr>
+                                            <td colspan='2'>
+                                                <h4>Schedule</h4>
+                                                <label class="switch">
+                                                    <input type="checkbox" <?php print $door_schedule_toggle == "true" ? 'checked=checked' : '';?> id="door_schedule_toggle" class="door_schedule_changed">
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    </table>
                                     <br>
-                                    <button class='buttongreen' id='buttongreen'>Arm Door</button>
-                                    <br>
+                                    <table style='margin:auto'>
+                                        <tr>
+                                            <td>
+                                                <h4>Minutes Prior</h4>
+                                                <div class="number-spinner">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="dwn"><span class="icon-minus door-icon-minus"></span></a>
+                                                    </span>
+                                                    <input type="text" class="pl-ns-value door_schedule_changed" value="<?php print $door_schedule_minutes_prior;?>" maxlength="3" id="door_schedule_minutes_prior">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="up"><span class="icon-plus door-icon-plus"></span></a>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <h4>Minutes End</h4>
+                                                <div class="number-spinner">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="dwn"><span class="icon-minus door-icon-minus"></span></a>
+                                                    </span>
+                                                    <input type="text" class="pl-ns-value door_schedule_changed" value="<?php print $door_schedule_minutes_class_term;?>" maxlength="3" id="door_schedule_minutes_class_term">
+                                                    <span class="ns-btn">
+                                                        <a data-dir="up"><span class="icon-plus door-icon-plus"></span></a>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                                 <div id='heat-manager' style='display: none'>
                                     <table style='margin:auto'>
@@ -344,7 +405,7 @@ if (file_exists("heating.json")) {
 
     </div>
 
-    <script src='jq.js'></script>
+    <script src='js/jq.js'></script>
     <script type="text/javascript">
 
     var ws;
@@ -424,6 +485,6 @@ if (file_exists("heating.json")) {
     }
 
     </script>
-    <script src="pincode.js"></script>
+    <script src="js/pincode.js"></script>
 </body>
 </html>

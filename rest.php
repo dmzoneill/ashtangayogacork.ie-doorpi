@@ -1,8 +1,8 @@
 <?php
 
-$override = "/var/www/html/override";
-$heating = "/var/www/html/heating.json";
-$heating_status = "/var/www/html/heating_status";
+$override = "/var/www/html/scratch/override";
+$heating = "/var/www/html/scratch/heating.json";
+$heating_status = "/var/www/html/scratch/heating_status";
 
 if (isset($_GET['action'])) {
 
@@ -51,6 +51,7 @@ if (file_exists($heating_status)) {
 $json = json_decode(file_get_contents($heating), true);
 $json['doorarm'] = !file_exists($override);
 $json['boost'] = file_exists($heating_status);
-$json['temperature'] = file_get_contents('/var/www/html/temperature');
-$json['humidity'] = file_get_contents('/var/www/html/humidity');
+$json['temperature'] = file_get_contents('/var/www/html/scratch/temperature');
+$json['humidity'] = file_get_contents('/var/www/html/scratch/humidity');
+
 print json_encode($json);

@@ -99,10 +99,10 @@ def check_schedule(schedule_json, heating_json, cstate):
 
     humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 
-    with open('/var/www/html/temperature', 'w') as filep1:
+    with open('/var/www/html/scratch/temperature', 'w') as filep1:
         filep1.write(str(temperature))
 
-    with open('/var/www/html/humidity', 'w') as filep2:
+    with open('/var/www/html/scratch/humidity', 'w') as filep2:
         filep2.write(str(humidity))
 
     server.send_message_to_all(str(temperature) + "," + str(humidity))
@@ -159,10 +159,10 @@ def main_loop(bool1, bool2):
         schedule_json = None
 
         try:
-            myfile1 = open('/var/www/html/heating.json', "r+")
+            myfile1 = open('/var/www/html/scratch/heating.json', "r+")
             heating_json = json.load(myfile1)
 
-            myfile2 = open('/var/www/html/schedule.json', "r+")
+            myfile2 = open('/var/www/html/scratch/schedule.json', "r+")
             schedule_json = json.load(myfile2)
         except IOError:
             time.sleep(sleep_time)
@@ -184,10 +184,10 @@ def main_loop(bool1, bool2):
             server.send_message_to_all(str(new_heating_state))
 
             if new_heating_state == True:
-                with open('/var/www/html/heating_status', 'w') as filep:
+                with open('/var/www/html/scratch/heating_status', 'w') as filep:
                     filep.write('on')
             else:
-                os.unlink('/var/www/html/heating_status')
+                os.unlink('/var/www/html/scratch/heating_status')
         else:
             print("state same:" + str(new_heating_state))
 

@@ -5,9 +5,9 @@ import os
 from websocket_server import WebsocketServer
 
 num = 1
-sound_input = 19;
-light_output = 21;
-last_time = time.time();
+sound_input = 19
+light_output = 21
+last_time = time.time()
 light_state = False
 server = WebsocketServer(9001, host='0.0.0.0')
 sleep_time = 1
@@ -46,7 +46,7 @@ def msg_received(cl, server, msg):
         for x in range(3):
             print( str(num) + ": " + str(light_state))
             num = num + 1
-            last_time = time.time() + sleep_time;
+            last_time = time.time() + sleep_time
 
             light_state = not light_state
             GPIO.output(light_output, light_state)
@@ -63,18 +63,17 @@ def msg_received(cl, server, msg):
 
 
 def buttonEventHandler_rising (pin):
-
     global num, last_time, light_state, server, sleep_time
 
-    if os.path.isfile('/var/www/html/enabled') == False:
+    if os.path.isfile('/var/www/html/scratch/enabled') == False:
         GPIO.output(light_output, False)
-        return;
+        return
 
     if time.time() >= last_time:
         for x in range(3):
             print( str(num) + ": " + str(light_state))
             num = num + 1
-            last_time = time.time() + sleep_time;
+            last_time = time.time() + sleep_time
 
             light_state = not light_state
             GPIO.output(light_output, light_state)
@@ -93,8 +92,8 @@ def buttonEventHandler_rising (pin):
 GPIO.add_event_detect(sound_input, GPIO.RISING, callback=buttonEventHandler_rising) 
 
 try:
-    if os.path.isfile('/var/www/html/enabled'):
-        os.remove('/var/www/html/enabled')
+    if os.path.isfile('/var/www/html/scratch/enabled'):
+        os.remove('/var/www/html/scratch/enabled')
 
     server.set_fn_client_left(client_left)
     server.set_fn_new_client(new_client)

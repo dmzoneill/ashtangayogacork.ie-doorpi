@@ -70,27 +70,10 @@ span {
   margin: auto auto;
 }
 
-.buttonred, .buttongreen {
-  width: 250px;
-  height: 80px;
-  font-size: 26px;
-  outline: none;
-}
-
 .buttonopendoor {
   width: 160px;
   height: 30px;
   font-size: 14px;
-}
-
-.buttonred {
-  color: #000000;
-  background-color: red;
-}
-
-.buttongreen {
-  color: #ffffff;
-  background-color: green;
 }
 
 .boost {

@@ -18,8 +18,12 @@ pin = 23
 
 heater1 = "10.42.0.10"
 heater2 = "10.42.0.20"
-ip1 = heater2
-ip2 = heater1
+heater3 = "10.42.0.30"
+heater4 = "10.42.0.40"
+ip1 = heater1
+ip2 = heater2
+ip3 = heater3
+ip4 = heater4
 port = 9999
 sleep_time = 10
 boost_time = None
@@ -72,16 +76,20 @@ def new_client(cl, server):
 
 
 def msg_received(cl, server, msg):
-    global client, boost_time, ip1, ip2
+    global client, boost_time, ip1, ip2, ip3, ip4
     msg = "Client (%s) : %s" % (cl['id'], msg)
     if boost_time is None:
         boost_time = datetime.now() + timedelta(minutes=15)
         change_heating_state(ip1,True)
         change_heating_state(ip2,True)
+        change_heating_state(ip3,True)
+        change_heating_state(ip4,True)
     else:
         boost_time = None
         change_heating_state(ip1,False)
         change_heating_state(ip2,False)
+        change_heating_state(ip3,False)
+        change_heating_state(ip4,False)
 
     print(msg)
 
@@ -98,6 +106,8 @@ def check_schedule(schedule_json, heating_json, cstate):
             boost_time = None
 
     humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
+    print("Temperature: " + str(temperature))
+    print("Humidity: " + str(humidity))
 
     with open('/var/www/html/scratch/temperature', 'w') as filep1:
         filep1.write(str(temperature))
@@ -120,14 +130,23 @@ def check_schedule(schedule_json, heating_json, cstate):
         start_time = datetime(now.year, now.month, now.day, shour, smin) - timedelta(minutes=int(heating_json['schedule_minutes_prior']))
         end_time = start_time + timedelta(minutes=int(heating_json['schedule_run_period']))
 
+        print("Now: " + str(now))
+        print("Start_time: " + str(start_time))
+        print("End_time: " + str(end_time))
+
         if now > start_time and now < end_time:
+            print("Within schedule time delta")
             if int(temperature) <= int(heating_json['schedule_on_temp']):
+                print("Start heating: less than <" + str(heating_json['schedule_on_temp']))
                 return True
             elif cstate and int(temperature) <= int(heating_json['schedule_cutoff_temp']):
+                print("Continue heating: less than <" + str(heating_json['schedule_cutoff_temp']))
                 return True
             else:
+                print("End heating: greater than >" + str(heating_json['schedule_cutoff_temp']))
                 return False
 
+    print("No heating today/now: False")
     return False
 
 
@@ -138,6 +157,7 @@ def change_heating_state(host, state):
     try:
         print(cmd)
         sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock_tcp.settimeout(4)
         sock_tcp.connect((host, port))
         sock_tcp.send(encrypt(cmd))
         data = sock_tcp.recv(2048)
@@ -153,8 +173,11 @@ def main_loop(bool1, bool2):
     global server, sleep_time, ip1, ip2
     heating_state = False
 
+    line = "========================================================"
+
     while True:
 
+        print(line)
         heating_json = None
         schedule_json = None
 
@@ -166,6 +189,7 @@ def main_loop(bool1, bool2):
             schedule_json = json.load(myfile2)
         except IOError:
             time.sleep(sleep_time)
+            print("Error reading schedule/heating config")
             continue
 
         pprint.pprint(heating_json)
@@ -174,25 +198,23 @@ def main_loop(bool1, bool2):
             time.sleep(sleep_time)
             continue
 
-        new_heating_state = check_schedule(schedule_json, heating_json, heating_state)
+        heating_state = check_schedule(schedule_json, heating_json, heating_state)
 
-        if new_heating_state != heating_state:
-            print("state change to: " + str(new_heating_state))
-            heating_state = new_heating_state
-            change_heating_state(ip1,new_heating_state)
-            change_heating_state(ip2, new_heating_state)
-            server.send_message_to_all(str(new_heating_state))
+        print("Set state: " + str(heating_state))
+        change_heating_state(ip1,heating_state)
+        change_heating_state(ip2,heating_state)
+        change_heating_state(ip3,heating_state)
+        change_heating_state(ip4,heating_state)
+        server.send_message_to_all(str(heating_state))
 
-            if new_heating_state == True:
-                with open('/var/www/html/scratch/heating_status', 'w') as filep:
-                    filep.write('on')
-            else:
-                os.unlink('/var/www/html/scratch/heating_status')
+        if heating_state == True:
+            with open('/var/www/html/scratch/heating_status', 'w') as filep:
+                filep.write('on')
         else:
-            print("state same:" + str(new_heating_state))
+            if os.path.exists('/var/www/html/scratch/heating_status'):
+                os.unlink('/var/www/html/scratch/heating_status')
 
         time.sleep(sleep_time)
-
 
 try:
     thread1 = threading.Thread(target=main_loop, args=(False, False))

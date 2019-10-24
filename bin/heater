@@ -10,6 +10,8 @@ from struct import pack
 
 heater1 = "10.42.0.10"
 heater2 = "10.42.0.20"
+heater3 = "10.42.0.30"
+heater4 = "10.42.0.40"
 port = 9999
 
 commands = {'info': '{"system":{"get_sysinfo":{}}}',
@@ -67,6 +69,22 @@ try:
 
     sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock_tcp.connect((heater2, port))
+    sock_tcp.send(encrypt(commands[sys.argv[1]]))
+    data = sock_tcp.recv(2048)
+    sock_tcp.close()
+    print("Sent:     " + sys.argv[1])
+    print("Received: " + decrypt(data[4:]))
+    
+    sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock_tcp.connect((heater3, port))
+    sock_tcp.send(encrypt(commands[sys.argv[1]]))
+    data = sock_tcp.recv(2048)
+    sock_tcp.close()
+    print("Sent:     " + sys.argv[1])
+    print("Received: " + decrypt(data[4:]))
+    
+    sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock_tcp.connect((heater4, port))
     sock_tcp.send(encrypt(commands[sys.argv[1]]))
     data = sock_tcp.recv(2048)
     sock_tcp.close()

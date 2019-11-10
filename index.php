@@ -167,7 +167,7 @@ if (isset($_GET['armdoor'])) {
     if ($enabled == true && file_exists($override) == false) {
         touch($thefile);
         file_put_contents($thefile, time());
-        chmod($thefile, 777);
+        chmod($thefile, 0777);
     } else {
         @unlink($thefile);
     }

@@ -2,6 +2,7 @@ import time
 import RPi.GPIO as GPIO
 import time
 import os
+import sys
 from websocket_server import WebsocketServer
 
 num = 1
@@ -15,6 +16,7 @@ sleep_time = 1
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(sound_input, GPIO.IN)
 GPIO.setup(light_output, GPIO.OUT)
+#GPIO.setwarnings(False)
 
 def client_left(cl, server):
     try:

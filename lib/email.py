@@ -13,6 +13,9 @@ changed state
 '''
 
 class Email:
+    
+    def __init__(self):
+        pass
 
     def file_get_contents(self, filename):
         with open(filename) as f:
@@ -20,7 +23,7 @@ class Email:
 
     def send_email(self, state):
         global message
-        message = message.replace("state", str(state))
+        message = message.replace("state", state)
         io = BytesIO(message)
         buffer = StringIO()
         c = pycurl.Curl()

@@ -25,7 +25,7 @@ def main_loop():
         heating_state = schedule.check_schedule(heating_state)
 
         if temp_state != heating_state:
-            emailer.send_email(heating_state)
+            emailer.send_email("On" if heating_state else "Off")
 
         if heating_state == True:
             plug_controller.plug_turn_all_on()

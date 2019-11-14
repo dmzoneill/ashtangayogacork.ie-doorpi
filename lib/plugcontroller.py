@@ -5,6 +5,7 @@ import json
 import time
 import os
 from struct import pack
+from lib.email import Email
 
 class PlugController:
 
@@ -13,6 +14,7 @@ class PlugController:
     retries = 3
     retry_sleep = 1
     logger = None
+    emailer = None
 
     commands = {'info': '{"system":{"get_sysinfo":{}}}',
                 'on': '{"system":{"set_relay_state":{"state":1}}}',
@@ -31,6 +33,7 @@ class PlugController:
 
     def __init__(self, logger):
         self.logger = logger
+        self.emailer = Email()
         self.logger.debug('started')
 
     def encrypt(self, string):
@@ -75,6 +78,7 @@ class PlugController:
             if str(state) == "0":
                 return True
             else:
+                self.emailer.send_email("Off")
                 self.plug_do_command(plug_ip, self.commands["off"])
                 retry = retry - 1
         return False
@@ -86,6 +90,7 @@ class PlugController:
             if str(state) == "1":
                 return True
             else:
+                self.emailer.send_email("On")
                 self.plug_do_command(plug_ip, self.commands["on"])
                 retry = retry - 1
         return False

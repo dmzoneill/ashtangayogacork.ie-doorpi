@@ -7,7 +7,6 @@ import time
 from lib.plugcontroller import PlugController
 from lib.websocket import WSManager
 from lib.schedule import Schedule
-from lib.email import Email
 
 logging.basicConfig(filename='/tmp/heating.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.DEBUG)
 logger = logging.getLogger(name=None)
@@ -15,25 +14,21 @@ logger = logging.getLogger(name=None)
 plug_controller = PlugController(logger)
 wsm = WSManager(plug_controller, logger)
 schedule = Schedule(wsm, logger)
-emailer = Email()
 
 def main_loop():
-    heating_state = False
+    old_state = False
 
     while True:
-        temp_state = heating_state
-        heating_state = schedule.check_schedule(heating_state)
+        new_state = schedule.check_schedule(old_state)
 
-        if temp_state != heating_state:
-            emailer.send_email("On" if heating_state == True else "Off")
-
-        if heating_state == True:
+        if new_state == True:
             plug_controller.plug_turn_all_on()
         else:
             plug_controller.plug_turn_all_off()
 
-        wsm.send(str(heating_state))
+        wsm.send(str(new_state))
         time.sleep(10)
+        old_state = new_state
 
 try:
     thread1 = threading.Thread(target=main_loop, args=())

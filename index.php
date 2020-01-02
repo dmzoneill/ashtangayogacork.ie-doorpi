@@ -10,6 +10,11 @@ if (isset($_GET['heating'])) {
     exit;
 }
 
+if (isset($_GET['heatingreset'])) {
+    print shell_exec("/usr/bin/heater reboot");
+    exit;
+}
+
 if (isset($_GET['door'])) {
     $json = json_encode($_POST);
     file_put_contents("scratch/door.json", $json);

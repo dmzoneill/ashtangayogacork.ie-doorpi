@@ -77,10 +77,12 @@ class PlugController:
             state = self.plug_get_on_off_state(plug_ip)
             if str(state) == "0":
                 return True
-            else:
-                self.emailer.send_email("Off")
+            elif str(state) == "1":
                 self.plug_do_command(plug_ip, self.commands["off"])
-                retry = retry - 1
+                self.emailer.send_email("Off")
+            else:
+                self.logger.debug("Ignoring: " + str(state))
+            retry = retry - 1
         return False
 
     def plug_turn_on(self, plug_ip): 
@@ -89,10 +91,12 @@ class PlugController:
             state = self.plug_get_on_off_state(plug_ip)
             if str(state) == "1":
                 return True
-            else:
-                self.emailer.send_email("On")
+            elif str(state) == "0":
                 self.plug_do_command(plug_ip, self.commands["on"])
-                retry = retry - 1
+                self.emailer.send_email("On")
+            else:
+                self.logger.debug("Ignoring: " + str(state))
+            retry = retry - 1
         return False
             
     def plug_get_on_off_state(self, plug_ip):

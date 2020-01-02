@@ -4,7 +4,9 @@ from io import BytesIO
 from StringIO import StringIO
 
 message = '''\
-From: "suicidalbeanbag@gmail.com" <Rick James>
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Mime-version: 1.0
 To: dmz.oneill@gmail.com
 Subject: AYC - Heat status change (state)
 
@@ -23,8 +25,8 @@ class Email:
 
     def send_email(self, state):
         global message
-        message = message.replace("state", state)
-        io = BytesIO(message)
+        copy = message.replace("state", state)
+        io = BytesIO(copy)
         buffer = StringIO()
         c = pycurl.Curl()
         c.setopt(c.URL, 'smtps://smtp.gmail.com:465')

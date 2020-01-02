@@ -77,6 +77,9 @@ class Schedule:
             shour = int(classobj['start_time'][0:2])
             smin = int(classobj['start_time'][3:5])
 
+            #if classobj['heating']== "0":
+            #    continue
+
             start_time = datetime(now.year, now.month, now.day, shour, smin) - timedelta(minutes=int(self.heating_json['schedule_minutes_prior']))
             end_time = start_time + timedelta(minutes=int(self.heating_json['schedule_run_period']))
 

@@ -84,7 +84,14 @@ function counterdown() {
 
   mins = Math.floor(boost_count / 60);
   secs = boost_count % 60;
-  $("#schedule_boost").text(mins + " mins " + secs + " secs");
+  if( secs % 3 > 0 )
+  {
+    $("#schedule_boost").text(mins + " mins " + secs + " secs");
+  }
+  else
+  {
+    $("#schedule_boost").text("Reset heaters");
+  }
 }
 
 function heating_controls() {
@@ -106,6 +113,7 @@ function heating_controls() {
       boost_running = true;
     }
     else {
+      $.get("index.php?heatingreset=true");
       boost_running = false;
       clearInterval(boost_timer);
       $("#schedule_boost").text("15 Mins");

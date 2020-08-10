@@ -9,7 +9,7 @@ from lib.email import Email
 
 class PlugController:
 
-    plugs = [ "10.42.0.10", "10.42.0.20", "10.42.0.30", "10.42.0.40" ]
+    plugs = [ "192.168.8.107", "192.168.8.108", "192.168.8.109", "192.168.8.110" ]
     plug_port = 9999
     retries = 3
     retry_sleep = 1

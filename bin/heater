@@ -8,10 +8,10 @@ import sys
 
 from struct import pack
 
-heater1 = "10.42.0.10"
-heater2 = "10.42.0.20"
-heater3 = "10.42.0.30"
-heater4 = "10.42.0.40"
+heater1 = "192.168.8.107"
+heater2 = "192.168.8.108"
+heater3 = "192.168.8.109"
+heater4 = "192.168.8.110"
 port = 9999
 
 commands = {'info': '{"system":{"get_sysinfo":{}}}',

@@ -15,7 +15,7 @@ html, body {
   padding: 0;
   margin: 0;
   font-family: monospace, sans-serif, manjari;
-  font-size: 12pt;
+  font-size: 16pt;
 }
 
 h1, h2, h3, h4, h5 {
@@ -26,31 +26,35 @@ h1 {
   margin-top: 10px;
   margin-bottom: 5px;
   color: red;
-  font-size: 16pt;
+  font-size: 18pt;
 }
 
 h3 {
   color: black;
-  font-size: 13pt;
+  font-size: 17pt;
 }
 
 h3 {
   color: black;
-  font-size: 11pt;
+  font-size: 15pt;
 }
 
 h5 {
   margin-top: 25px;
 }
 
+h4 {
+  margin-bottom: 10px;
+}
+
 h5.good {
   color: green;
-  font-size: 13pt;
+  font-size: 16pt;
 }
 
 h5.bad {
   color: red;
-  font-size: 13pt;
+  font-size: 16pt;
 }
 
 button::-moz-focus-inner {
@@ -71,18 +75,20 @@ span {
 }
 
 .buttonopendoor {
-  width: 160px;
-  height: 30px;
-  font-size: 14px;
+  width: 260px;
+  height: 40px;
+  font-size: 16pt;
 }
 
 .boost {
   color: #000000;
   background-color: #FF3333;
   width: 150px;
-  height: 34px;
-  font-size: 12pt;
+  height: 50px;
+  font-size: 16pt;
   font-weight: bold;
+  margin-right: 20px;
+  margin-left: 10px;
 }
 
 .table {
@@ -94,7 +100,7 @@ span {
 
 .tablewrapper {
   height: 100%;
-  width: 650;
+  width: 850px;
   margin-left: auto;
   margin-right: auto;
   margin-top: auto;
@@ -111,15 +117,15 @@ span {
 
 .slide {
   overflow: hidden;
-  height: 500px;
-  width: 350px;
+  height: 650px;
+  width: 450px;
   color: #000000;
   text-align: center;
   margin: 0px;
   margin-right: 20px;
-  -webkit-box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.6);
-  -moz-box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.6);
-  box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.6);
+  -webkit-box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.6);
+  box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.6);
 }
 
 /*------
@@ -128,19 +134,19 @@ span {
 
 #pincode {
   overflow: hidden;
-  height: 500px;
-  width: 350px;
+  height: 650px;
+  width: 450px;
   color: #000000;
   text-align: center;
   margin: 0px;
   margin-right: 20px;
-  -webkit-box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.6);
-  -moz-box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.6);
-  box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.6);
+  -webkit-box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.6);
+  box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.6);
 }
 
 #numbers {
-  max-width: 320px;
+  max-width: 420px;
   padding: 0 10px;
   margin: 0 auto;
   position: relative;
@@ -157,14 +163,13 @@ span {
 }
 
 #pincode button {
-  width: 50px;
-  height: 50px;
-  margin-bottom: 20px;
+  width: 65px;
+  height: 65px;
+  margin-bottom: 30px;
   background-color: rgba(0, 0, 0, 0.35);
   border: 0;
   color: #CC0000;
-  font-size: 20px;
-  line-height: 45px;
+  font-size: 24pt;
   border-radius: 100%;
   opacity: 1;
   outline: 0;
@@ -190,8 +195,8 @@ span {
 }
 
 #fields .numberfield span {
-  height: 10px;
-  width: 10px;
+  height: 20px;
+  width: 20px;
   border: 2px solid #F00;
   background-color: transparent;
   border-radius: 100%;
@@ -373,9 +378,10 @@ span {
 
 .number-spinner {
   max-width: 120px;
-  line-height: 30px;
+  line-height: 50px;
   padding: 0;
-  margin: auto;
+  margin-right: 10px;
+  margin-left: 10px;
   border-radius: 4px;
   border: 2px solid #e2e2e2;
   overflow: hidden;
@@ -384,16 +390,16 @@ span {
 }
 
 .number-spinner input {
-  height: 30px;
-  max-height: 30px;
-  line-height: 30px;
+  height: 50px;
+  max-height: 80px;
+  line-height: 50px;
   font-size: 1em;
   padding: 0;
   margin: 0;
   border: none;
   position: relative;
   float: left;
-  width: 100%;
+  width: 60px;
   text-align: center;
 }
 
@@ -411,12 +417,12 @@ span {
 }
 
 .number-spinner .ns-btn a {
-  height: 30px;
-  min-height: 30px;
-  width: 30px;
+  height: 50px;
+  min-height: 50px;
+  width: 50px;
   padding: 0;
-  max-width: 30px;
-  line-height: 30px;
+  max-width: 50px;
+  line-height: 50px;
   border-radius: 0;
   border: none;
   text-align: center;
@@ -430,15 +436,15 @@ span {
 
 .number-spinner .ns-btn .icon-minus:after {
   content: "\002212";
-  font-size: 25px;
-  line-height: 28px;
+  font-size: 32pt;
+  line-height: 48px;
   font-weight: bold;
 }
 
 .number-spinner .ns-btn .icon-plus:after {
   content: "\00002B";
-  font-size: 28px;
-  line-height: 25px;
+  font-size: 32pt;
+  line-height: 48px;
   font-weight: bold;
 }
 
@@ -447,8 +453,8 @@ span {
 .switch {
   position: relative;
   display: inline-block;
-  width: 60px;
-  height: 34px;
+  width: 100px;
+  height: 50px;
 }
 
 /* Hide default HTML checkbox */
@@ -476,9 +482,9 @@ span {
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
+  height: 42px;
+  width: 48px;
+  left: 20px;
   bottom: 4px;
   background-color: white;
   -webkit-transition: .4s;

@@ -1,7 +1,10 @@
 #!/usr/bin/python
 import pycurl
 from io import BytesIO
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 message = '''\
 Content-Type: text/html; charset="us-ascii"

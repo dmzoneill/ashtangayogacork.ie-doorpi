@@ -191,8 +191,8 @@ if (isset($_GET['armdoor'])) {
     <div class="center">
         <table class='tablewrapper'>
             <tr>
-                <td><img src='images/logo-500.png' id='logofade' style='width:260px; margin-right:20px; margin-left:20px' /></td>
-                <td style='width:200px; text-align: right'>
+                <td><img src='images/logo-500.png' id='logofade' style='width:320px; margin-right:20px; margin-left:20px' /></td>
+                <td style='width:360px; text-align: right'>
 
                     <div id="pincode">
                         <div class="table">
@@ -260,7 +260,7 @@ if (isset($_GET['armdoor'])) {
                     <div class="slide" id="controls">
                         <div class="table">
                             <div class="cell">
-                                <button class='door-manager'><img width='48' src='images/door-small.png'></button> <button><img width='48' class='heat-manager' src='images/heating-small.png'></button>
+                                <button class='door-manager'><img width='56' src='images/door-small.png'></button> <button><img width='56' class='heat-manager' src='images/heating-small.png'></button>
                                 <br>
                                 <br>
                                 <div id='door-manager'>
@@ -325,7 +325,7 @@ if (isset($_GET['armdoor'])) {
                                     <br>
                                     <table style='margin:auto'>
                                         <tr>
-                                            <td>
+                                            <td style='margin-right:20px'>
                                                 <h4>Minutes Prior</h4>
                                                 <div class="number-spinner">
                                                     <span class="ns-btn">

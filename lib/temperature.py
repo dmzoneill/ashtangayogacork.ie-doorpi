@@ -1,27 +1,41 @@
 #!/usr/bin/python
 
-import Adafruit_DHT
+import time
+import board
+import adafruit_dht
 import os
 
 class TempHumid:
 
-    sensor = Adafruit_DHT.DHT22
-    pin = 23
+    sensor = adafruit_dht.DHT22(board.D4, use_pulseio=False)
     logger = None
+    lasttemp = 0
+    lasthum = 0
 
     def __init__(self, logger):
         self.logger = logger
         
     def get_reading(self):
         self.logger.info('Reading: ')
-        humidity, temperature = Adafruit_DHT.read_retry(self.sensor, self.pin)
-        
-        with open('/var/www/html/scratch/temperature', 'w') as filep1:
-            filep1.write(str(temperature))
+        x = 0
 
-        with open('/var/www/html/scratch/humidity', 'w') as filep2:
-            filep2.write(str(humidity))
-
-        self.logger.info('Read Temp: ' + str(temperature) + ', Hum: ' + str(humidity))
-        return humidity, temperature
-
+        while x < 3:
+            x = x + 1
+            try:
+                self.lasttemp = self.sensor.temperature
+                self.lasthum = self.sensor.humidity
+                with open('/var/www/html/scratch/temperature', 'w') as filep1:
+                    filep1.write(str(self.lasttemp))
+                with open('/var/www/html/scratch/humidity', 'w') as filep2:
+                    filep2.write(str(self.lasthum))
+                self.logger.info('Read Temp: ' + str(self.lasttemp) + ', Hum: ' + str(self.lasthum))
+                return self.lasthum, self.lasttemp
+            except RuntimeError as error:
+                self.logger.info('error: ' + str(error))
+                time.sleep(1.0)
+                continue
+            except Exception as error:
+                self.logger.info('error: ' + str(error))
+                time.sleep(1.0)
+                continue
+        return self.lasthum, self.lasttemp

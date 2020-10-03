@@ -7,7 +7,7 @@ import os
 
 class TempHumid:
 
-    sensor = adafruit_dht.DHT22(board.D4, use_pulseio=False)
+    sensor = adafruit_dht.DHT22(board.D19, use_pulseio=False)
     logger = None
     lasttemp = 0
     lasthum = 0
@@ -16,7 +16,7 @@ class TempHumid:
         self.logger = logger
         
     def get_reading(self):
-        self.logger.info('Reading: ')
+        self.logger.info('Temperature Reading: ')
         x = 0
 
         while x < 3:

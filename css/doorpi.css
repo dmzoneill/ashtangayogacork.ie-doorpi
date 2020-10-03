@@ -1,0 +1,82 @@
+@import 'https://fonts.googleapis.com/css?family=Titillium+Web:400,700';
+:focus {
+  outline: none;
+}
+
+::-moz-focus-inner {
+  border: 0;
+}
+
+html, body {
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-family: monospace, sans-serif, manjari;
+  font-size: 16pt;
+}
+
+h1, h2, h3, h4, h5 {
+  margin: 0px;
+}
+
+h1 {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  color: red;
+  font-size: 24pt;
+}
+
+button::-moz-focus-inner {
+  border: 0;
+}
+
+span {
+  vertical-align: top;
+}
+
+.center {
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+  width: 100%;
+  height: 100%;
+  margin: auto auto;
+}
+
+.boost {
+  color: #000000;
+  background-color: #FF3333;
+  width: 330px;
+  height: 80px;
+  font-size: 16pt;
+  font-weight: bold;
+  margin-right: 20px;
+  margin-left: 10px;
+}
+
+.table {
+  display: table;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.tablewrapper {
+  height: 100%;
+  width: 850px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.cell {
+  display: table-cell;
+  vertical-align: middle;
+  position: relative;
+  width: 340px;
+  text-align: center;
+}

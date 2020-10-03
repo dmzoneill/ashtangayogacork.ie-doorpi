@@ -2,9 +2,14 @@
 #rm -rf ~/.mozilla/firefox/*.default/*.sqlite ~/.mozilla/firefox/*default/sessionstore.js
 #rm -rf ~/.cache/mozilla/firefox/*.default/*
 #rm -rf ~/.cache/midori/
-
-nohup /usr/bin/python3 /var/www/html/monitor-clap.py > /tmp/clap &
-nohup /usr/bin/python3 /var/www/html/heating-manager.py > /tmp/heat &
+#sleep 15
+#sudo nohup /usr/bin/python3 /var/www/html/monitor-clap.py > /tmp/clap &
+#sleep 5
+#sudo nohup /usr/bin/python3 /var/www/html/heating-manager.py > /tmp/heat &
+#sleep 5
+sleep 25
+sudo nohup /usr/bin/python3 /var/www/html/shala-manager.py > /tmp/shala &
+sleep 10
 #midori -e Fullscreen -e Navigationbar -e Statusbar -a http://localhost
 chromium-browser --start-fullscreen http://localhost &
 #sleep 10

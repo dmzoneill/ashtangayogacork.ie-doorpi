@@ -38,8 +38,11 @@ class WSManager:
         self.logger.debug(msg)
 
     def send(self, msg):
-        self.logger.debug('Send: ' + msg)
-        self.server.send_message_to_all(msg)
+        try:
+            self.logger.debug('Send: ' + msg)
+            self.server.send_message_to_all(msg)
+        except:
+            pass
 
     def get_boost_time(self):
         return self.boost_time

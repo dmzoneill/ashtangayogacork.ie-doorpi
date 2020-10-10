@@ -8,7 +8,6 @@ from pathlib import Path
 class Schedule:
 
     logger = None
-    # heating_json = None
     schedule_json = None
     wsmnager = None
 
@@ -77,9 +76,14 @@ class Schedule:
             self.logger.debug("Heating Now: " + str(now))
             self.logger.debug("Heating Start_time: " + str(start_time))
             self.logger.debug("Heating End_time: " + str(end_time))
+            self.logger.debug("Heating state for class: " + str(classobj['heating']))
+
 
             if now > start_time and now < end_time:
                 self.logger.debug("Within schedule time delta")
+                if int(classobj['heating']) == 0:
+                    self.logger.debug("Heating disabled for class")
+                    return False
                 if current_state == True:
                     if int(temperature) <= int(classobj['highTemperatureThreshold']):
                         self.logger.debug("Continue heating: less than <" + str(classobj['highTemperatureThreshold']))

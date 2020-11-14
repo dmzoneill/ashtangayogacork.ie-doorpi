@@ -30,6 +30,7 @@ class TestPlugController(unittest.TestCase):
     @patch("builtins.open", create=True)
     def test_plug_turn_all_on(self, mock_open):
         """Set up test fixture."""
+        # self.plugcontroller.plug_turn_all_off()
         self.assertEqual(True, True)
 
     def test_plug_turn_off(self):

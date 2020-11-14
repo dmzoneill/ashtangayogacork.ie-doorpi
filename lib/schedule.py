@@ -152,3 +152,29 @@ class Schedule:
         self.logger.debug("Door disabled now")
         if Path(path).exists():
             Path(path).unlink()
+
+    def check_hoover_schedule(self):
+        """Dont care."""
+        now = datetime.now()
+
+        for classobj in self.get_todays_classes(now):
+
+            shour = int(classobj["start_time"][0:2])
+            smin = int(classobj["start_time"][3:5])
+
+            start_time = datetime(
+                now.year, now.month, now.day, shour, smin
+            ) - timedelta(minutes=150)
+            end_time = datetime(now.year, now.month, now.day, shour, smin) - timedelta(
+                minutes=148
+            )
+
+            self.logger.debug("Hoover Now: " + str(now))
+            self.logger.debug("Hoover Start_time: " + str(start_time))
+
+            if now > start_time and now < end_time:
+                self.logger.debug("Hoover should start now")
+                return True
+
+        self.logger.debug("Dont start hoover")
+        return False

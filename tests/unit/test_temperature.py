@@ -25,9 +25,22 @@ class TestTemperature(unittest.TestCase):
         """Set up test fixture."""
         self.temphumid = TempHumid(self.logger)
 
+    @patch("builtins.open", create=True)
     @patch("lib.temperature.time.sleep")
-    def test_get_reading(self, time):
+    def test_get_reading(self, time, mock_open):
         """Set up test fixture."""
-        self.sensor.temperature.side_effect = 50
-        self.sensor.humidity.side_effect = 50
+        self.temphumid.get_reading()
+
+    @patch("builtins.open", create=True)
+    @patch("lib.temperature.time.sleep")
+    def test_get_reading_runtime_error(self, time, mock_open):
+        """Set up test fixture."""
+        mock_open.side_effect = RuntimeError
+        self.temphumid.get_reading()
+
+    @patch("builtins.open", create=True)
+    @patch("lib.temperature.time.sleep")
+    def test_get_reading_exception(self, time, mock_open):
+        """Set up test fixture."""
+        mock_open.side_effect = Exception
         self.temphumid.get_reading()

@@ -5,6 +5,7 @@ import threading
 import time
 
 from lib.doorcontroller import DoorController
+from lib.hoovercontroller import HooverController
 from lib.plugcontroller import PlugController
 from lib.schedule import Schedule
 from lib.websocket import WSManager
@@ -16,6 +17,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(name=None)
 
+hoover_controller = HooverController(logger)
 plug_controller = PlugController(logger)
 door_controller = DoorController(logger)
 wsm = WSManager(plug_controller, logger)
@@ -29,6 +31,9 @@ def main_loop():
     while True:
         schedule.read_settings()
         schedule.check_door_schedule()
+
+        if schedule.check_hoover_schedule():
+            hoover_controller.turn_on_hoover()
 
         new_state = schedule.check_heating_schedule(old_state)
 

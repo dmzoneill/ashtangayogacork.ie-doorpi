@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Dont care."""
-import os
 import threading
 import time
+from os.path import isfile
 
 import RPi.GPIO as Gpio
 
@@ -84,15 +84,16 @@ class DoorController:
         """Dont care."""
         if self.last_time + 20 > time.time():
             self.last_time = time.time()
-            return
+            return False
 
-        if os.path.isfile("/var/www/html/scratch/enabled") is False:
+        if isfile("/var/www/html/scratch/enabled") is False:
             Gpio.output(self.door_release_output, False)
             self.last_time = time.time()
-            return
+            return False
 
         Gpio.output(self.door_release_output, True)
         self.server.send_message_to_all(str(True))
         time.sleep(0.2)
         Gpio.output(self.door_release_output, False)
         self.server.send_message_to_all(str(False))
+        return True

@@ -48,7 +48,6 @@ class WSManager:
             self.server.send_message_to_all(msg)
         except Exception as ex:
             self.logger.debug(str(ex))
-            pass
 
     def get_boost_time(self):
         """Dont care."""

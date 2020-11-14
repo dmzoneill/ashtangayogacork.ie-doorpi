@@ -63,6 +63,32 @@ class TestDoorController(unittest.TestCase):
         self.doorcontroller.server = MagicMock()
         self.doorcontroller.msg_received(cl, None, "refresh")
 
-    def test_open_door(self):
+    def test_open_door_time_not_lapsed(self):
         """Set up test fixture."""
-        self.doorcontroller.open_door()
+        self.assertEqual(self.doorcontroller.open_door(), False)
+
+    @patch("lib.doorcontroller.isfile")
+    @patch("lib.doorcontroller.Gpio.output")
+    @patch("lib.doorcontroller.time.time")
+    def test_open_door_time_lapsed_disabled(self, mock_time, mock_gpio, mock_isfile):
+        """Set up test fixture."""
+        self.doorcontroller.server = MagicMock()
+        self.doorcontroller.server.send_message_to_all = MagicMock()
+
+        mock_time.return_value = 9999999999
+        mock_gpio.return_value = False
+        mock_isfile.return_value = False
+        self.assertEqual(self.doorcontroller.open_door(), False)
+
+    @patch("lib.doorcontroller.isfile")
+    @patch("lib.doorcontroller.Gpio.output")
+    @patch("lib.doorcontroller.time.time")
+    def test_open_door_time_lapsed_enabled(self, mock_time, mock_gpio, mock_isfile):
+        """Set up test fixture."""
+        self.doorcontroller.server = MagicMock()
+        self.doorcontroller.server.send_message_to_all = MagicMock()
+
+        mock_time.return_value = 9999999999
+        mock_gpio.return_value = True
+        mock_isfile.return_value = True
+        self.assertEqual(self.doorcontroller.open_door(), True)

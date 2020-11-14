@@ -66,6 +66,14 @@ class TestSchedule(unittest.TestCase):
         )
         self.schedule.read_settings()
 
+    @patch("builtins.open", create=True)
+    @patch("lib.schedule.json.load")
+    def test_read_settings_ioerror(self, mock_json, mock_open):
+        """Set up test fixture."""
+        self.schedule.read_settings()
+        mock_open.side_effect = IOError
+        self.schedule.read_settings()
+
     @patch("lib.schedule.TempHumid.get_reading")
     def test_read_th(self, get_reading):
         """Set up test fixture."""
@@ -161,7 +169,7 @@ class TestSchedule(unittest.TestCase):
 
         mins = 0 if now.minute - 10 < 0 else now.minute - 10
         start_time = datetime(now.year, now.month, now.day, now.hour, mins)
-        end_time = datetime(now.year, now.month, now.day, now.hour + 2, 0)
+        end_time = datetime(now.year, now.month, now.day, (now.hour + 2) % 24, 0)
 
         self.schedule.schedule_json = [
             {
@@ -210,8 +218,148 @@ class TestSchedule(unittest.TestCase):
         self.assertEqual(self.schedule.check_heating_schedule(False), True)
         self.assertEqual(self.schedule.check_heating_schedule(True), True)
 
+    @patch("lib.schedule.Path.exists")
+    @patch("lib.schedule.Path.touch")
+    @patch("lib.schedule.Path.unlink")
+    def test_check_door_schedule_enabled(self, mock_unlink, mock_touch, mock_exists):
+        """Set up test fixture."""
+        now = datetime.now()
+        mock_touch.return_value = True
+        mock_exists.return_value = True
+
+        mins = 0 if now.minute - 10 < 0 else now.minute - 10
+        start_time = datetime(now.year, now.month, now.day, now.hour, mins)
+        end_time = datetime(now.year, now.month, now.day, (now.hour + 2) % 24, 0)
+
+        self.WSManager.get_boost_time.return_value = now
+        self.schedule.schedule_json = [
+            {
+                "id": "1",
+                "date": now.strftime("%Y-%m-%d"),
+                "start_time": start_time.strftime("%H:%M:%S"),
+                "end_time": end_time.strftime("%H:%M:%S"),
+                "class_type": "19",
+                "class_instructor": "1",
+                "max_attendees": "30",
+                "sticky": "0",
+                "waitlist": "0",
+                "free": "0",
+                "heating": "0",
+                "sublet": "0",
+                "name": "Eunice",
+                "level": "1",
+                "msg_frequency": "0",
+                "msg_title": "",
+                "token_restriction": "0",
+                "lowTemperatureThreshold": "20",
+                "highTemperatureThreshold": "30",
+                "heatingMinutesBefore": "45",
+                "heatingMinutesRunFor": "40",
+                "doorArmedBeforeMins": "100",
+                "doorDisarmedAfterMins": "100",
+                "student_id": "1",
+                "email": "eunice@ashtangayoga.ie",
+                "ctname": "Counted Full Primary (online)",
+            }
+        ]
+        self.schedule.check_door_schedule()
+
+    @patch("lib.schedule.Path.exists")
+    @patch("lib.schedule.Path.touch")
+    @patch("lib.schedule.Path.unlink")
+    def test_check_door_schedule_enabled_time_delta(
+        self, mock_unlink, mock_touch, mock_exists
+    ):
+        """Set up test fixture."""
+        now = datetime.now()
+        mock_touch.return_value = True
+        mock_exists.return_value = False
+
+        mins = 0 if now.minute - 10 < 0 else now.minute - 10
+        start_time = datetime(now.year, now.month, now.day, now.hour, mins)
+        end_time = datetime(now.year, now.month, now.day, (now.hour + 2) % 24, 0)
+
+        self.WSManager.get_boost_time.return_value = now
+        self.schedule.schedule_json = [
+            {
+                "id": "1",
+                "date": now.strftime("%Y-%m-%d"),
+                "start_time": start_time.strftime("%H:%M:%S"),
+                "end_time": end_time.strftime("%H:%M:%S"),
+                "class_type": "19",
+                "class_instructor": "1",
+                "max_attendees": "30",
+                "sticky": "0",
+                "waitlist": "0",
+                "free": "0",
+                "heating": "0",
+                "sublet": "0",
+                "name": "Eunice",
+                "level": "1",
+                "msg_frequency": "0",
+                "msg_title": "",
+                "token_restriction": "0",
+                "lowTemperatureThreshold": "20",
+                "highTemperatureThreshold": "30",
+                "heatingMinutesBefore": "45",
+                "heatingMinutesRunFor": "40",
+                "doorArmedBeforeMins": "100",
+                "doorDisarmedAfterMins": "100",
+                "student_id": "1",
+                "email": "eunice@ashtangayoga.ie",
+                "ctname": "Counted Full Primary (online)",
+            }
+        ]
+        self.schedule.check_door_schedule()
+
+    @patch("lib.schedule.Path.exists")
+    @patch("lib.schedule.Path.touch")
+    @patch("lib.schedule.Path.unlink")
+    def test_check_door_schedule_disabled(self, mock_unlink, mock_touch, mock_exists):
+        """Set up test fixture."""
+        now = datetime.now()
+        mock_touch.return_value = True
+        mock_exists.return_value = True
+
+        mins = 0 if now.minute - 10 < 0 else now.minute - 10
+        start_time = datetime(now.year, now.month, now.day, now.hour, mins)
+        end_time = datetime(now.year, now.month, now.day, (now.hour + 2) % 24, 0)
+
+        self.WSManager.get_boost_time.return_value = now
+        self.schedule.schedule_json = [
+            {
+                "id": "1",
+                "date": now.strftime("%Y-%m-%d"),
+                "start_time": start_time.strftime("%H:%M:%S"),
+                "end_time": end_time.strftime("%H:%M:%S"),
+                "class_type": "19",
+                "class_instructor": "1",
+                "max_attendees": "30",
+                "sticky": "0",
+                "waitlist": "0",
+                "free": "0",
+                "heating": "0",
+                "sublet": "0",
+                "name": "Eunice",
+                "level": "1",
+                "msg_frequency": "0",
+                "msg_title": "",
+                "token_restriction": "0",
+                "lowTemperatureThreshold": "20",
+                "highTemperatureThreshold": "30",
+                "heatingMinutesBefore": "45",
+                "heatingMinutesRunFor": "40",
+                "doorArmedBeforeMins": "1",
+                "doorDisarmedAfterMins": "1",
+                "student_id": "1",
+                "email": "eunice@ashtangayoga.ie",
+                "ctname": "Counted Full Primary (online)",
+            }
+        ]
+        self.schedule.check_door_schedule()
+
     @patch("lib.schedule.Path")
-    def test_check_door_schedule(self, mock_path):
+    def test_check_hoover_schedule(self, mock_path):
         """Set up test fixture."""
         now = datetime.now()
         mock_path.touch.return_value = True
@@ -219,7 +367,7 @@ class TestSchedule(unittest.TestCase):
 
         mins = 0 if now.minute - 10 < 0 else now.minute - 10
         start_time = datetime(now.year, now.month, now.day, now.hour, mins)
-        end_time = datetime(now.year, now.month, now.day, now.hour + 2, 0)
+        end_time = datetime(now.year, now.month, now.day, (now.hour + 2) % 24, 0)
 
         self.WSManager.get_boost_time.return_value = now
         self.schedule.schedule_json = [
@@ -252,4 +400,44 @@ class TestSchedule(unittest.TestCase):
                 "ctname": "Counted Full Primary (online)",
             }
         ]
-        self.schedule.check_door_schedule()
+        self.assertEqual(self.schedule.check_hoover_schedule(), False)
+
+    def test_check_hoover_schedule_started(self):
+        """Set up test fixture."""
+        now = datetime.now()
+        start_time = now + timedelta(minutes=149)
+
+        if int(now.strftime("%H")) > 20:
+            return
+
+        self.schedule.schedule_json = [
+            {
+                "id": "1",
+                "date": now.strftime("%Y-%m-%d"),
+                "start_time": start_time.strftime("%H:%M:%S"),
+                "end_time": "",
+                "class_type": "19",
+                "class_instructor": "1",
+                "max_attendees": "30",
+                "sticky": "0",
+                "waitlist": "0",
+                "free": "0",
+                "heating": "0",
+                "sublet": "0",
+                "name": "Eunice",
+                "level": "1",
+                "msg_frequency": "0",
+                "msg_title": "",
+                "token_restriction": "0",
+                "lowTemperatureThreshold": "20",
+                "highTemperatureThreshold": "30",
+                "heatingMinutesBefore": "45",
+                "heatingMinutesRunFor": "40",
+                "doorArmedBeforeMins": "30",
+                "doorDisarmedAfterMins": "5",
+                "student_id": "1",
+                "email": "eunice@ashtangayoga.ie",
+                "ctname": "Counted Full Primary (online)",
+            }
+        ]
+        self.assertEqual(self.schedule.check_hoover_schedule(), True)

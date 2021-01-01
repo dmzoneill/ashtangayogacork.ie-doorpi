@@ -4,7 +4,7 @@ import filecmp
 import os
 from shutil import copyfile
 
-from lirc import Lirc
+import lirc
 
 
 class HooverController:
@@ -15,7 +15,7 @@ class HooverController:
 
     def __init__(self, logger):
         """Dont care."""
-        self.lircd = Lirc()
+        self.lircd = lirc.Client()
         self.logger = logger
         self.logger.debug("Started hoover controller")
         ret1 = self.check_config(

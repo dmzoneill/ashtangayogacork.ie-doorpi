@@ -14,7 +14,7 @@ class TestHooverController(unittest.TestCase):
         # Load default config
         cls.logger = MagicMock()
 
-    @patch("lib.hoovercontroller.Lirc")
+    @patch("lib.hoovercontroller.lirc")
     @patch("lib.hoovercontroller.filecmp.cmp")
     @patch("lib.hoovercontroller.os.system")
     @patch("lib.hoovercontroller.copyfile")

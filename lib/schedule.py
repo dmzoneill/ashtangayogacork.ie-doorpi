@@ -3,6 +3,7 @@
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
+import time
 
 from lib.temperature import TempHumid
 
@@ -71,6 +72,7 @@ class Schedule:
         boost_active = self.is_boost_active(now)
 
         while humidity is None:
+            self.logger.debug("Sesnsor data was null")
             time.sleep(10)
             humidity, temperature = self.read_th()
 

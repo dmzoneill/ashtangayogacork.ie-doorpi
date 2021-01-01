@@ -70,6 +70,10 @@ class Schedule:
         humidity, temperature = self.read_th()
         boost_active = self.is_boost_active(now)
 
+        while humidity is None:
+            time.sleep(10)
+            humidity, temperature = self.read_th()
+
         self.logger.debug("humidity: " + str(humidity))
         self.logger.debug("temperature: " + str(temperature))
 

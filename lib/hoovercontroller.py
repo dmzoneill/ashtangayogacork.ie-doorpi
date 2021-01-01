@@ -19,11 +19,11 @@ class HooverController:
         self.logger = logger
         self.logger.debug("Started hoover controller")
         ret1 = self.check_config(
-            "/var/www/html/conf/lirc_options.conf", "/etc/lircd/lirc_options.conf"
+            "/var/www/html/conf/lirc_options.conf", "/etc/lirc/lirc_options.conf"
         )
         ret2 = self.check_config(
             "/var/www/html/conf/lircd.conf.d/hoover.conf",
-            "/etc/lircd/lircd.conf.d/hoover.conf",
+            "/etc/lirc/lircd.conf.d/hoover.conf",
         )
         if ret1 or ret2:
             self.restart_lircd()

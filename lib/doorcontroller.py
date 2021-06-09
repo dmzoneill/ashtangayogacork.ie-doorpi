@@ -18,7 +18,7 @@ class DoorController:
     server = None
     wsport = 9001
 
-    buzzer_input = 21
+    buzzer_input = 12
     door_release_output = 20
     buzzer_event_completed = True
     last_time = time.time()
@@ -52,6 +52,7 @@ class DoorController:
         self.server.run_forever()
 
     def buzzer_handler(self, pin):
+        print("here pin change")
         """Dont care."""
         self.open_door()
 
@@ -82,14 +83,17 @@ class DoorController:
 
     def open_door(self):
         """Dont care."""
+        print("here open_door")
         if self.last_time + 20 > time.time():
             self.last_time = time.time()
             return False
 
         if isfile("/var/www/html/scratch/enabled") is False:
+            print("here door not enabled")
             Gpio.output(self.door_release_output, False)
             self.last_time = time.time()
             return False
+        print("here door open")
 
         Gpio.output(self.door_release_output, True)
         self.server.send_message_to_all(str(True))

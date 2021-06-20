@@ -10,6 +10,7 @@
 sleep 25
 sudo nohup /usr/bin/python3 /var/www/html/shala-manager.py > /tmp/shala &
 sudo nohup /usr/bin/python3 /var/www/html/bin/keepalive.py &
+sudo nohup /usr/bin/python3 /var/www/html/bin/kafkadoor.py &
 sleep 10
 #midori -e Fullscreen -e Navigationbar -e Statusbar -a http://localhost
 chromium-browser --start-fullscreen http://localhost &

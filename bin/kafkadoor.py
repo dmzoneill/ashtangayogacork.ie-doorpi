@@ -11,6 +11,7 @@ while True:
         consumer = KafkaConsumer('door', bootstrap_servers=['46.101.231.44:9092'])
         for message in consumer:
             if os.path.exists("/var/www/html/scratch/enabled"):
+                print("opne door")
                 subprocess.run(["/var/www/html/bin/opendoor"])
             print ("%s:%d:%d: key=%s value=%s" % (message.topic, message.partition, message.offset, message.key, message.value))
 

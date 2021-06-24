@@ -1,0 +1,22 @@
+#!/usr/bin/python3
+import time
+import RPi.GPIO as GPIO
+
+time.sleep(5)
+
+door_output = 20;
+state = False
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(door_output, GPIO.OUT)
+
+for x in range(2):
+
+    state = not state
+    GPIO.output(door_output, state)    
+    time.sleep(1)
+
+    state = not state
+    GPIO.output(door_output, state)
+    time.sleep(1)

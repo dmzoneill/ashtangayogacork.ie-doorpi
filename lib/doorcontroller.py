@@ -25,6 +25,7 @@ class DoorController:
 
     def __init__(self, logger):
         """Dont care."""
+        self.last_time = time.time()
         self.logger = logger
         self.logger.debug("Started door controller")
         self.gpio_setup()
@@ -38,8 +39,10 @@ class DoorController:
         Gpio.setup(self.buzzer_input, Gpio.IN)
         Gpio.setup(self.door_release_output, Gpio.OUT)
         Gpio.add_event_detect(
-            self.buzzer_input, Gpio.FALLING, callback=self.buzzer_handler
+                self.buzzer_input, Gpio.BOTH, callback=self.buzzer_handler
         )
+        channel_is_on = Gpio.input(self.buzzer_input)
+        print(str(channel_is_on))
         self.logger.info("Door Gpio setup complete")
 
     def websocket_setup(self):
@@ -82,10 +85,15 @@ class DoorController:
         self.open_door()
 
     def open_door(self):
+        channel_is_on = Gpio.input(self.buzzer_input)
+        print(str(channel_is_on))
         """Dont care."""
-        print("here open_door")
-        if self.last_time + 20 > time.time():
+        Gpio.output(self.door_release_output, False)
+        self.server.send_message_to_all(str(False))
+        print("here open_door 1988")
+        if self.last_time + 5 > time.time():
             self.last_time = time.time()
+            print("too fast")
             return False
 
         if isfile("/var/www/html/scratch/enabled") is False:
@@ -93,11 +101,12 @@ class DoorController:
             Gpio.output(self.door_release_output, False)
             self.last_time = time.time()
             return False
-        print("here door open")
+        print("here door open 2")
 
         Gpio.output(self.door_release_output, True)
         self.server.send_message_to_all(str(True))
-        time.sleep(0.2)
+        time.sleep(0.5)
         Gpio.output(self.door_release_output, False)
         self.server.send_message_to_all(str(False))
+        self.last_time = time.time()
         return True

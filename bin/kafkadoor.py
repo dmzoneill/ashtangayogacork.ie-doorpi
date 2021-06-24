@@ -5,10 +5,11 @@ import os
 from kafka import KafkaConsumer
 import subprocess
 
-consumer = KafkaConsumer('door', bootstrap_servers=['46.101.231.44:9092'])
+consumer = KafkaConsumer('door', bootstrap_servers=['fio.ie:9092'])
 
 while True:
-    try:        
+    try:       
+        print(".")
         for message in consumer:
             if os.path.exists("/var/www/html/scratch/enabled"):
                 print("open door")
@@ -16,9 +17,9 @@ while True:
             print ("%s:%d:%d: key=%s value=%s" % (message.topic, message.partition, message.offset, message.key, message.value))
 
         time.sleep(1)
-        print(".")
     except:
         traceback.print_exc()
         time.sleep(1)
         consumer = KafkaConsumer('door', bootstrap_servers=['46.101.231.44:9092'])
+    print(".")
 

@@ -31,14 +31,17 @@ class WSManager:
 
     def msg_received(self, cl, server, msg):
         """Dont care."""
-        msg = "Client (%s) : %s" % (cl["id"], msg)
-        if self.boost_time is None:
+        if 'boost' in msg:
             self.boost_time = datetime.now() + timedelta(minutes=15)
             self.plug_controller.plug_turn_all_on()
+        elif 'stop' in msg:
+            self.boost_time = None
+            self.plug_controller.plug_turn_all_off()
         else:
             self.boost_time = None
             self.plug_controller.plug_turn_all_off()
-
+        
+        msg = "Client (%s) : %s" % (cl["id"], msg)       
         self.logger.debug(msg)
 
     def send(self, msg):

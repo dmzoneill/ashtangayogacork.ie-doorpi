@@ -103,6 +103,7 @@ function heating_controls() {
     if (boost_running == false) {
       boost_timer = setInterval(counterdown, 1000);
       boost_running = true;
+      ws2.send("boost");
     }
     else {
       $.get("index.php?heatingreset=true");
@@ -110,8 +111,8 @@ function heating_controls() {
       clearInterval(boost_timer);
       $("#schedule_boost").text("15 Mins");
       boost_count = 900;
+      ws2.send("stop");
     }
-    ws2.send("boost");
   });
 }
 
@@ -126,5 +127,5 @@ $(document).ready(function () {
 
   window.setInterval(function () {
     update_schedule();
-  }, 60000);
+  }, 10000);
 });

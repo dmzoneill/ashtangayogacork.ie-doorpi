@@ -11,13 +11,13 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 def both(channel):
-    print("event")
+    print("hello peanuts!!!!")
 
 if __name__ == '__main__':
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-    GPIO.add_event_detect(BUTTON_GPIO, GPIO.FALLING, callback=both, bouncetime=300)
+    GPIO.add_event_detect(BUTTON_GPIO, GPIO.RISING, callback=both, bouncetime=300)
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.pause()

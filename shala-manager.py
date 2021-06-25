@@ -43,7 +43,7 @@ def main_loop():
             plug_controller.plug_turn_all_off()
 
         wsm.send(str(new_state))
-        time.sleep(10)
+        time.sleep(3)
         old_state = new_state
 
 

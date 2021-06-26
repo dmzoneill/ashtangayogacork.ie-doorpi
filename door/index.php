@@ -3,18 +3,12 @@
 if(isset($_GET['id'])){
     print("opening\n");
 
-    $ch = curl_init();
-    $url = "http://ashtangayoga.ie/classes/?action=door_action_applied&id=" . $_GET['id'] . "&daction=open&dmessage=successfully opened";
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0); 
-    curl_setopt($ch, CURLOPT_TIMEOUT, 3); //timeout in seconds
-    $response = curl_exec($ch);
-    curl_close($ch);
+    $url = "https://ashtangayoga.ie/classes/?action=door_action_applied&id=" . $_GET['id'] . "&daction=open&dmessage=successfully%20opened";
     print($url . "\n");
-
+    
+    shell_exec("/usr/bin/curl \"$url\"");
     shell_exec("/usr/bin/nohup /var/www/html/bin/opendoor-delayed");
+    print(".");
 } else {
     print("not opening\n");
 }

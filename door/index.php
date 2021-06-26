@@ -1,6 +1,7 @@
 <?php
 
 if(isset($_GET['id'])){
+    print("opening");
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "http://ashtangayoga.ie/classes?door_action_applied=yes&id=" . $wpdb->insert_id . "&action=open&message=successfully opened");
@@ -12,4 +13,6 @@ if(isset($_GET['id'])){
     curl_close($ch);
 
     shell_exec("/usr/bin/nohup /var/www/html/bin/opendoor-delayed");
+} else {
+    print("not opening");
 }

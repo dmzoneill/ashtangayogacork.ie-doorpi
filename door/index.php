@@ -1,7 +1,7 @@
 <?php
 
 if(isset($_GET['id'])){
-    print("opening");
+    print("opening\n");
 
     $ch = curl_init();
     $url = "http://ashtangayoga.ie/classes/?action=door_action_applied&id=" . $_GET['id'] . "&daction=open&dmessage=successfully opened";
@@ -12,8 +12,9 @@ if(isset($_GET['id'])){
     curl_setopt($ch, CURLOPT_TIMEOUT, 3); //timeout in seconds
     $response = curl_exec($ch);
     curl_close($ch);
+    print($url . "\n");
 
     shell_exec("/usr/bin/nohup /var/www/html/bin/opendoor-delayed");
 } else {
-    print("not opening");
+    print("not opening\n");
 }

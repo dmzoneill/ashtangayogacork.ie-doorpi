@@ -28,16 +28,21 @@ class TempHumid:
         while x < 3:
             x = x + 1
             try:
-                self.lasttemp = self.sensor.temperature
-                self.lasthum = self.sensor.humidity
-                with open("/var/www/html/scratch/temperature", "w") as filep1:
-                    filep1.write(str(self.lasttemp))
-                with open("/var/www/html/scratch/humidity", "w") as filep2:
-                    filep2.write(str(self.lasthum))
+                ltemp = self.sensor.temperature
+                lhum = self.sensor.humidity
+                if ltemp is not None:
+                    self.lasttemp = ltemp
+                    with open("/var/www/html/scratch/temperature", "w") as filep1:
+                        filep1.write(str(self.lasttemp))
+                if lhum is not None:
+                    self.lasthum = lhum
+                    with open("/var/www/html/scratch/humidity", "w") as filep2:
+                        filep2.write(str(self.lasthum))
                 self.logger.info(
                     "Read Temp: " + str(self.lasttemp) + ", Hum: " + str(self.lasthum)
                 )
-                return self.lasthum, self.lasttemp
+                if ltemp is not None or lhum is not None:
+                    return self.lasthum, self.lasttemp
             except RuntimeError as error:
                 self.logger.info("error: " + str(error))
                 time.sleep(1.0)

@@ -31,7 +31,10 @@ def main():
         schedule.check_door_schedule()
 
         new_state = schedule.check_heating_schedule(old_state)
-        heater_change_state(new_state)
+        try:
+            heater_change_state(new_state)
+        except:
+            pass
 
         time.sleep(3)
         old_state = new_state

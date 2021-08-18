@@ -10,6 +10,7 @@ if(isset($_GET['id'])){
     echo shell_exec("sudo /var/www/html/bin/opendoor-delayed");
     echo shell_exec("sudo /usr/bin/curl \"$url\"");
     print(".");
-} else {
+}
+else {
     print("not opening\n");
 }

@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 import time
+import json
 
 from lib.temperature import TempHumid
 
@@ -13,12 +14,10 @@ class Schedule:
 
     logger = None
     schedule_json = None
-    wsmnager = None
 
-    def __init__(self, wsmnager, logger):
+    def __init__(self, logger):
         """Dont care."""
         self.logger = logger
-        self.wsmnager = wsmnager
         self.logger.debug("schedule started")
 
     def read_settings(self):
@@ -36,20 +35,8 @@ class Schedule:
         """Dont care."""
         th = TempHumid(self.logger)
         humidity, temperature = th.get_reading()
-        self.wsmnager.send(str(temperature) + "," + str(humidity))
         self.logger.debug(str(temperature) + "," + str(humidity))
         return humidity, temperature
-
-    def is_boost_active(self, now):
-        """Dont care."""
-        if self.wsmnager.get_boost_time() is not None:
-            if now < self.wsmnager.get_boost_time():
-                self.logger.debug("Heating Boost active")
-                return True
-            else:
-                self.wsmnager.set_boost_time(None)
-                return False
-        return False
 
     def get_todays_classes(self, now):
         """Dont care."""
@@ -69,7 +56,6 @@ class Schedule:
         """Dont care."""
         now = datetime.now()
         humidity, temperature = self.read_th()
-        boost_active = self.is_boost_active(now)
 
         while humidity is None:
             self.logger.debug("Sensor data was null")
@@ -78,9 +64,6 @@ class Schedule:
 
         self.logger.debug("humidity: " + str(humidity))
         self.logger.debug("temperature: " + str(temperature))
-
-        if boost_active is True:
-            return True
 
         for classobj in self.get_todays_classes(now):
 
@@ -158,29 +141,3 @@ class Schedule:
         self.logger.debug("Door disabled now")
         if Path(path).exists():
             Path(path).unlink()
-
-    def check_hoover_schedule(self):
-        """Dont care."""
-        now = datetime.now()
-
-        for classobj in self.get_todays_classes(now):
-
-            shour = int(classobj["start_time"][0:2])
-            smin = int(classobj["start_time"][3:5])
-
-            start_time = datetime(
-                now.year, now.month, now.day, shour, smin
-            ) - timedelta(minutes=150)
-            end_time = datetime(now.year, now.month, now.day, shour, smin) - timedelta(
-                minutes=148
-            )
-
-            self.logger.debug("Hoover Now: " + str(now))
-            self.logger.debug("Hoover Start_time: " + str(start_time))
-
-            if now > start_time and now < end_time:
-                self.logger.debug("Hoover should start now")
-                return True
-
-        self.logger.debug("Dont start hoover")
-        return False

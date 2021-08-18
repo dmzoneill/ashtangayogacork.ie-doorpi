@@ -2,11 +2,6 @@
 
 $doorArmedFile = "/var/www/html/scratch/enabled";
 
-if (isset($_GET['heatingreset'])) {
-    print shell_exec("/var/www/html/bin/heater reboot");
-    exit;
-}
-
 if (isset($_GET['schedule'])) {
 
     $json = file_get_contents("scratch/schedule.json");
@@ -74,7 +69,7 @@ if (isset($_GET['schedule'])) {
 }
 
 if (isset($_GET['opendoor'])) {
-    print shell_exec("sudo /var/www/html/bin/opendoor");
+    echo shell_exec("sudo /var/www/html/bin/opendoor-delayed");
     exit;
 }
 

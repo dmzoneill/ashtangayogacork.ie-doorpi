@@ -7,7 +7,6 @@ import time
 from plugcontroller import PlugController
 import logging
 import os
-import asyncio
 
 logging.basicConfig(level=logging.INFO)
 
@@ -41,12 +40,6 @@ def save():
     global config, config_file
     logging.info("save config")
     save_json(config, Path(config_file))
-
-
-""" @app.on_event('startup')
-@load
-async def app_startup(background_tasks: BackgroundTasks):
-   background_tasks.add_task(plug_controller.plug_turn_all_off) """
 
 
 @app.get("/")

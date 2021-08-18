@@ -2,77 +2,17 @@ boost_running = false;
 boost_timer = null;
 boost_count = 900;
 
-var ws;
-var ws2;
-function init() {
-
-    ws = new WebSocket("ws://192.168.8.2:9001/");
-
-    ws.onopen = function() {
-        output("onopen");
-    };
-
-    ws.onmessage = function(e) {
-        output(e.data);
-    };
-
-    ws.onclose = function() {
-        output("onclose");
-    };
-
-    ws.onerror = function(e) {
-        output("onerror");
-        console.log(e);
-    };
-}
-
-function init2() {
-    ws2 = new WebSocket("ws://192.168.8.2:9002/");
-
-    ws2.onopen = function() {
-        console.log("onopen");
-    };
-
-    ws2.onmessage = function(e) {
-        output2(e.data);
-    };
-
-    ws2.onclose = function() {
-        console.log("close");
-    };
-
-    ws2.onerror = function(e) {
-        console.log(e)
-    };
-}
-
-function output(str) {
-   console.log( "x:" + str)
-}
-
-function output2(str) {
-   console.log( "x:" + str)
-   if(str.localeCompare("") == 0) {
-        return;
-   }
-
-   if(str.indexOf(',') > 0 ){
-       var parts = str.split(',');
-       celcius = parseFloat((parts[0]).substring(0,4))
-       hum = parseFloat((parts[1]).substring(0,4))
-
-       if(celcius > 0 && hum > 0) {
-          $("#metric_temp").text(celcius + "C");
-          $("#metric_humid").text(hum + "%");
-       }
-   }
-}
-
 function update_schedule() {
   $.get("index.php?schedule=true", function (data) {
     $("#schedule").show();
     $("#scheduletable").html(data);
     heating_controls();
+    $.get("scratch/temperature", function (data) {
+      $("#metric_temp").text(data + "C");    
+    });
+    $.get("scratch/humidity", function (data) {
+      $("#metric_humid").text(data + "%");    
+    });
   });
 }
 
@@ -103,15 +43,14 @@ function heating_controls() {
     if (boost_running == false) {
       boost_timer = setInterval(counterdown, 1000);
       boost_running = true;
-      ws2.send("boost");
+      $.get("http://127.0.0.1:8000/boost");
     }
     else {
-      $.get("index.php?heatingreset=true");
+      $.get("http://127.0.0.1:8000/reset");
       boost_running = false;
       clearInterval(boost_timer);
       $("#schedule_boost").text("15 Mins");
       boost_count = 900;
-      ws2.send("stop");
     }
   });
 }
@@ -121,8 +60,6 @@ function opendoor() {
 }
 
 $(document).ready(function () {
-  init2();
-  init();
   update_schedule();
 
   window.setInterval(function () {

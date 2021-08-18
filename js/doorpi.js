@@ -2,15 +2,17 @@ boost_running = false;
 boost_timer = null;
 boost_count = 900;
 
+var host = window.location.host; 
+
 function update_schedule() {
-  $.get("index.php?schedule=true", function (data) {
+  $.get("http://" + host + "/index.php?schedule=true", function (data) {
     $("#schedule").show();
     $("#scheduletable").html(data);
     heating_controls();
-    $.get("scratch/temperature", function (data) {
+    $.get("http://" + host + "/scratch/temperature", function (data) {
       $("#metric_temp").text(data + "C");    
     });
-    $.get("scratch/humidity", function (data) {
+    $.get("http://" + host + "/scratch/humidity", function (data) {
       $("#metric_humid").text(data + "%");    
     });
   });
@@ -43,10 +45,10 @@ function heating_controls() {
     if (boost_running == false) {
       boost_timer = setInterval(counterdown, 1000);
       boost_running = true;
-      $.get("http://127.0.0.1:8000/boost");
+      $.get("http://" + host + ":8000/boost");
     }
     else {
-      $.get("http://127.0.0.1:8000/reset");
+      $.get("http://" + host + ":8000/reset");
       boost_running = false;
       clearInterval(boost_timer);
       $("#schedule_boost").text("15 Mins");
@@ -56,7 +58,7 @@ function heating_controls() {
 }
 
 function opendoor() {
-  $.get("index.php?opendoor=true");
+  $.get("http://" + host + "index.php?opendoor=true");
 }
 
 $(document).ready(function () {

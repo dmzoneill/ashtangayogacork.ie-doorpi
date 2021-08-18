@@ -1,5 +1,0 @@
-flake8
-pytest
-asynctest
-adafruit_dht
-lirc

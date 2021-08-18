@@ -1,6 +1,0 @@
-mock
-pytest
-pytest-cov
-asyncmock
-asynctest
-lirc

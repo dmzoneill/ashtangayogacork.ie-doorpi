@@ -58,7 +58,7 @@ function heating_controls() {
 }
 
 function opendoor() {
-  $.get("http://" + host + "index.php?opendoor=true");
+  $.get("http://" + host + "/index.php?opendoor=true");
 }
 
 $(document).ready(function () {

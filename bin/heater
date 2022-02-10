@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 from PyP100 import PyP100
 
 heater1 = "192.168.8.20"

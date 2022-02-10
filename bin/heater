@@ -27,11 +27,11 @@ for heater in heaters:
         p100.login()
 
         if sys.argv[1] == "on":
-            p100.turnOn()
+            print(p100.turnOn())
         elif sys.argv[1] == "off":
-            p100.turnOff()
+            print(p100.turnOff())
         elif sys.argv[1] == "info":
-            p100.getDeviceInfo()
+            print(p100.getDeviceInfo())
         else:
             print("Who knows")
         

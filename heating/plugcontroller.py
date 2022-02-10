@@ -4,6 +4,7 @@ import sys
 import time
 import logging
 from PyP100 import PyP100
+import traceback
 
 
 logging.basicConfig(level=logging.INFO)
@@ -51,7 +52,7 @@ class PlugController:
                 p100.turnOff()
                 time.sleep(0.25)
             except Exception as ex:
-                logging.info(sys.exc_info()[0])
+                logging.info(traceback.format_exc())
                 logging.info(str(ex))
 
             time.sleep(0.25)
@@ -71,7 +72,7 @@ class PlugController:
                 p100.turnOn()
                 time.sleep(0.25)
             except Exception as ex:
-                logging.info(sys.exc_info()[0])
+                logging.info(traceback.format_exc())
                 logging.info(str(ex))
 
             time.sleep(0.25)

@@ -21,7 +21,7 @@ if len(sys.argv) != 2:
 
 for heater in heaters:
     try:
-        print("Trying {heater} using {username} and {password}".format(heater, username, password))
+        print("Trying {} using {} and {}".format(heater, username, password))
         p100 = PyP100.P100(heater, username, password)
         p100.handshake()
         p100.login()

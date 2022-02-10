@@ -1,5 +1,4 @@
 #!/usr/bin/python
-from PyP100 import PyP100
 
 import socket
 import json
@@ -9,10 +8,10 @@ import sys
 
 from struct import pack
 
-heater1 = "192.168.8.20"
-heater2 = "192.168.8.30"
-heater3 = "192.168.8.40"
-heater4 = "192.168.8.50"
+heater1 = "192.168.8.107"
+heater2 = "192.168.8.108"
+heater3 = "192.168.8.109"
+heater4 = "192.168.8.110"
 port = 9999
 
 commands = {'info': '{"system":{"get_sysinfo":{}}}',

@@ -57,7 +57,7 @@ class Schedule:
         now = datetime.now()
         humidity, temperature = self.read_th()
 
-        while humidity is None:
+        while humidity is None or int(humidity) == 0:
             self.logger.debug("Sensor data was null")
             time.sleep(10)
             humidity, temperature = self.read_th()

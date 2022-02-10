@@ -11,8 +11,8 @@ heaters = [ heater1, heater2, heater3, heater4 ]
 
 f = open("/creds","r")
 lines=f.readlines()
-username = strip(lines[0])
-password = strip(lines[1])
+username = lines[0].strip()
+password = lines[1].strip()
 f.close()
 
 if len(sys.argv) != 2:

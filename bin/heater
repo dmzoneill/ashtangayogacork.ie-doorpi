@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-from PyP100 import PyP100
 import sys 
+
+from PyP100 import PyP100
 
 heater1 = "192.168.8.20"
 heater2 = "192.168.8.30"
@@ -10,8 +11,8 @@ heaters = [ heater1, heater2, heater3, heater4 ]
 
 f = open("/creds","r")
 lines=f.readlines()
-username = lines[0]
-password = lines[1]
+username = strip(lines[0])
+password = strip(lines[1])
 f.close()
 
 if len(sys.argv) != 2:
@@ -20,6 +21,7 @@ if len(sys.argv) != 2:
 
 for heater in heaters:
     try:
+        print("Trying {heater} using {username} and {password}".format(heater, username, password))
         p100 = PyP100.P100(heater, username, password)
         p100.handshake()
         p100.login()

@@ -1,0 +1,39 @@
+#!/usr/bin/python3
+import sys 
+
+from PyP100 import PyP100
+
+heater1 = "192.168.8.20"
+heater2 = "192.168.8.30"
+heater3 = "192.168.8.40"
+heater4 = "192.168.8.50"
+heaters = [ heater1, heater2, heater3, heater4 ]
+
+f = open("/creds","r")
+lines=f.readlines()
+username = lines[0].strip()
+password = lines[1].strip()
+f.close()
+
+if len(sys.argv) != 2:
+    print("specify, info, on or off")
+    sys.exit(1)
+
+for heater in heaters:
+    try:
+        print("Trying {} using {} and {}".format(heater, username, password))
+        p100 = PyP100.P100(heater, username, password)
+        p100.handshake()
+        p100.login()
+
+        if sys.argv[1] == "on":
+            print(p100.turnOn())
+        elif sys.argv[1] == "off":
+            print(p100.turnOff())
+        elif sys.argv[1] == "info":
+            print(p100.getDeviceInfo())
+        else:
+            print("Who knows")
+        
+    except Exception as e:
+        print(e)

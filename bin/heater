@@ -1,39 +1,103 @@
-#!/usr/bin/python3
-import sys 
+#!/usr/bin/python
 
-from PyP100 import PyP100
+import socket
+import json
+import time
+import os
+import sys
 
-heater1 = "192.168.8.20"
-heater2 = "192.168.8.30"
-heater3 = "192.168.8.40"
-heater4 = "192.168.8.50"
-heaters = [ heater1, heater2, heater3, heater4 ]
+from struct import pack
 
-f = open("/creds","r")
-lines=f.readlines()
-username = lines[0].strip()
-password = lines[1].strip()
-f.close()
+heater1 = "192.168.8.3"
+heater2 = "192.168.8.4"
+heater3 = "192.168.8.5"
+heater4 = "192.168.8.6"
+port = 9999
+
+commands = {'info': '{"system":{"get_sysinfo":{}}}',
+            'on': '{"system":{"set_relay_state":{"state":1}}}',
+            'off': '{"system":{"set_relay_state":{"state":0}}}',
+            'cloudinfo': '{"cnCloud":{"get_info":{}}}',
+            'wlanscan': '{"netif":{"get_scaninfo":{"refresh":0}}}',
+            'time': '{"time":{"get_time":{}}}',
+            'schedule': '{"schedule":{"get_rules":{}}}',
+            'countdown': '{"count_down":{"get_rules":{}}}',
+            'antitheft': '{"anti_theft":{"get_rules":{}}}',
+            'reboot': '{"system":{"reboot":{"delay":1}}}',
+            'reset': '{"system":{"reset":{"delay":1}}}',
+            'energy': '{"emeter":{"get_realtime":{}}}'
+            }
+
+def encrypt(string):
+    key = 171
+    result = pack('>I', len(string))
+    for i in string:
+        a = key ^ ord(i)
+        key = a
+        result += chr(a)
+    return result
+
+
+def decrypt(string):
+    key = 171
+    result = ""
+    for i in string:
+        a = key ^ ord(i)
+        key = ord(i)
+        result += chr(a)
+    return result
+
+
+cmds = ['info', 'on', 'off']
 
 if len(sys.argv) != 2:
     print("specify, info, on or off")
     sys.exit(1)
 
-for heater in heaters:
-    try:
-        print("Trying {} using {} and {}".format(heater, username, password))
-        p100 = PyP100.P100(heater, username, password)
-        p100.handshake()
-        p100.login()
+if sys.argv[1] not in commands:
+    print("specify, " + ",".join(commands.keys()))
+    sys.exit(1)
+ 
+try:
+    sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock_tcp.connect((heater1, port))
+    sock_tcp.send(encrypt(commands[sys.argv[1]]))
+    data = sock_tcp.recv(2048)
+    sock_tcp.close()
+    print("Sent:     " + sys.argv[1])
+    print("Received: " + decrypt(data[4:]))
+except socket.error:
+    pass
 
-        if sys.argv[1] == "on":
-            print(p100.turnOn())
-        elif sys.argv[1] == "off":
-            print(p100.turnOff())
-        elif sys.argv[1] == "info":
-            print(p100.getDeviceInfo())
-        else:
-            print("Who knows")
-        
-    except Exception as e:
-        print(e)
+try:
+    sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock_tcp.connect((heater2, port))
+    sock_tcp.send(encrypt(commands[sys.argv[1]]))
+    data = sock_tcp.recv(2048)
+    sock_tcp.close()
+    print("Sent:     " + sys.argv[1])
+    print("Received: " + decrypt(data[4:]))
+except socket.error:
+    pass
+    
+try:
+    sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock_tcp.connect((heater3, port))
+    sock_tcp.send(encrypt(commands[sys.argv[1]]))
+    data = sock_tcp.recv(2048)
+    sock_tcp.close()
+    print("Sent:     " + sys.argv[1])
+    print("Received: " + decrypt(data[4:]))
+except socket.error:
+    pass
+
+try:
+    sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock_tcp.connect((heater4, port))
+    sock_tcp.send(encrypt(commands[sys.argv[1]]))
+    data = sock_tcp.recv(2048)
+    sock_tcp.close()
+    print("Sent:     " + sys.argv[1])
+    print("Received: " + decrypt(data[4:]))
+except socket.error:
+    pass

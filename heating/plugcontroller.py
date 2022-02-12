@@ -3,8 +3,7 @@
 import sys
 import time
 import logging
-from PyP100 import PyP100
-import traceback
+from kasa import SmartPlug
 
 
 logging.basicConfig(level=logging.INFO)
@@ -13,66 +12,78 @@ logging.basicConfig(level=logging.INFO)
 class PlugController:
     """Dont care."""
 
-    plugs = ["192.168.8.20", "192.168.8.30", "192.168.8.40", "192.168.8.50"]
+    plugs = ["192.168.8.3", "192.168.8.4", "192.168.8.5", "192.168.8.6"]
     retries = 3
-    username = None
-    password = None
+
+    commands = {
+        "info": '{"system":{"get_sysinfo":{}}}',
+        "on": '{"system":{"set_relay_state":{"state":1}}}',
+        "off": '{"system":{"set_relay_state":{"state":0}}}',
+        "cloudinfo": '{"cnCloud":{"get_info":{}}}',
+        "wlanscan": '{"netif":{"get_scaninfo":{"refresh":0}}}',
+        "time": '{"time":{"get_time":{}}}',
+        "schedule": '{"schedule":{"get_rules":{}}}',
+        "countdown": '{"count_down":{"get_rules":{}}}',
+        "antitheft": '{"anti_theft":{"get_rules":{}}}',
+        "reboot": '{"system":{"reboot":{"delay":1}}}',
+        "reset": '{"system":{"reset":{"delay":1}}}',
+        "energy": '{"emeter":{"get_realtime":{}}}',
+    }
 
     def __init__(self):
         """Dont care."""
-        f = open("/creds","r")
-        lines = f.readlines()
-        self.username = lines[0].strip()
-        self.password = lines[1].strip()
-        f.close()
         logging.info("started plug controller")
 
-    def plug_turn_all_off(self):
+    async def plug_turn_all_off(self):
         """Dont care."""
         logging.info("plug_turn_all_off")
         for plug_ip in self.plugs:
-            self.plug_turn_off(plug_ip)
+            await self.plug_turn_off(plug_ip)
 
-    def plug_turn_all_on(self):
+    async def plug_turn_all_on(self):
         """Dont care."""
         logging.info("plug_turn_all_on")
         for plug_ip in self.plugs:
-            self.plug_turn_on(plug_ip)
+            await self.plug_turn_on(plug_ip)
 
-    def plug_turn_off(self, plug_ip):
+    async def plug_turn_off(self, plug_ip):
         """Dont care."""
         logging.info("plug_turn_off " + plug_ip)
         retry = self.retries
         while retry > 0:
             retry = retry - 1
             try:
-                p100 = PyP100.P100(plug_ip, self.username, self.password)
-                p100.handshake()
-                p100.login()
-                p100.turnOff()
-                time.sleep(0.25)
+                plug = SmartPlug(plug_ip)
+                await plug.update()            
+                if plug.is_on is False:
+                    return True
+                if plug.is_on is True:
+                    await plug.turn_off()
+                
             except Exception as ex:
-                logging.info(traceback.format_exc())
+                logging.info(sys.exc_info()[0])
                 logging.info(str(ex))
 
             time.sleep(0.25)
 
         return False
 
-    def plug_turn_on(self, plug_ip):
+    async def plug_turn_on(self, plug_ip):
         """Dont care."""
         logging.info("plug_turn_on " + plug_ip)
         retry = self.retries
         while retry > 0:
             retry = retry - 1
             try:
-                p100 = PyP100.P100(plug_ip, self.username, self.password)
-                p100.handshake()
-                p100.login()
-                p100.turnOn()
+                plug = SmartPlug(plug_ip)
+                await plug.update()            
+                if plug.is_on is True:
+                    return True
+                if plug.is_on is False:
+                    await plug.turn_on()                
                 time.sleep(0.25)
             except Exception as ex:
-                logging.info(traceback.format_exc())
+                logging.info(sys.exc_info()[0])
                 logging.info(str(ex))
 
             time.sleep(0.25)

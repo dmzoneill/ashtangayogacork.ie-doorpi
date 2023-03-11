@@ -3,3 +3,5 @@
 .tox/**
 reports/**
 scratch/**
+heating/nohup.out
+heating/state.json

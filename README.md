@@ -1,5 +1,9 @@
 # Ashtanga Yoga Cork DoorPi
 
+<p align="center">
+  <img src=".github/logo.png" alt="ashtangayogacork.ie-doorpi logo" width="128" />
+</p>
+
 A Raspberry Pi controller for the Ashtanga Yoga Cork studio. It opens the
 studio door and runs the heating around the class schedule.
 
